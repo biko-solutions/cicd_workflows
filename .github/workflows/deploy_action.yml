@@ -83,11 +83,21 @@ jobs:
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{inputs.SERVER_ADDR}} > ~/.ssh/known_hosts
-          if [[ ! -z "${{inputs.SERVER_PORT}}" ]]; then
-            ssh -T -p ${{inputs.SERVER_PORT}} ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null
-          else
-            ssh -T ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null  
-          fi          
+          cat >>~/.ssh/config <<EOF
+          Host deploy
+            HostName ${{inputs.SERVER_ADDR}}
+            User ${{inputs.SERVER_USER}}
+            Port ${{inputs.SERVER_PORT}}
+            IdentityFile ~/.ssh/id_rsa
+            StrictHostKeyChecking no
+          EOF
+          ssh -T deploy > /dev/null
+          # if [[ ! -z "${{inputs.SERVER_PORT}}" ]]; then
+          #   ssh -T -p ${{inputs.SERVER_PORT}} ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null
+          # else
+          #   ssh -T ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null  
+          # fi
+          exit 200        
           echo "#!/bin/bash" > ~/update_script.sh
       # - name: Update script - prepare
       #   run: |
