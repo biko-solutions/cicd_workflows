@@ -94,6 +94,8 @@ jobs:
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_rsa
+          echo "${{secrets.SSH_KEY}}" > ~/text.txt
+          cat ~/text.txt
           ssh-keyscan -H ${{inputs.SERVER_ADDR}} > ~/.ssh/known_hosts
           if [[ ! -z "${{inputs.SERVER_PORT}}" ]]; then
             ssh -Tv -p ${{inputs.SERVER_PORT}} ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null
