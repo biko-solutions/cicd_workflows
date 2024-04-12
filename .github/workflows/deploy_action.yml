@@ -39,7 +39,7 @@ on:
         required: true
 env:
   MAIN_PATH: ${{inputs.PROJECT_PATH}}
-  ODOO_CONFIG: ${{inputs.PROJECT_PATH}}/conf/odoo-server.conf
+  ODOO_CONFIG: ${{inputs.PROJECT_PATH}}/config_local/odoo-server.conf
   ODOO_DB: ${{inputs.ODOO_DB}}
 
 jobs:
