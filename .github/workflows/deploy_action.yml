@@ -38,8 +38,8 @@ on:
       ODOO_PASSWORD:
         required: true
 env:
-  MAIN_PATH: ${{inputs.PROJECT_PATH}}/${{github.ref_name}}
-  ODOO_CONFIG: ${{inputs.PROJECT_PATH}}/${{github.ref_name}}/conf/odoo-server.conf
+  MAIN_PATH: ${{inputs.PROJECT_PATH}}
+  ODOO_CONFIG: ${{inputs.PROJECT_PATH}}/conf/odoo-server.conf
   ODOO_DB: ${{inputs.ODOO_DB}}
 
 jobs:
