@@ -173,8 +173,10 @@ jobs:
           sleep 10
           cd $MAIN_PATH
           exec "$SHELL" -c "$MAIN_PATH/venv/bin/python3 $MAIN_PATH/odoo-bin -c $ODOO_CONFIG -d $ODOO_DB -u base --logfile= --log-level=error --stop-after-init"
+          echo "=== STARTING ODOO ==="
           sudo systemctl start ${{inputs.ODOO_SERVICE}}
           sleep 10
+          echo "=== SHOW STATUS ODOO ==="
           sudo systemctl status ${{inputs.ODOO_SERVICE}}
           EOF
           cat ~/update_script.sh
