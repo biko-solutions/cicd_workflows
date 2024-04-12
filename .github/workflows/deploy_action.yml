@@ -78,18 +78,6 @@ jobs:
             exit 100
           fi
           echo "=== END CHECKING INPUTS ==="
-      # - name: Checkout
-      #   uses: actions/checkout@v4
-      #   with:
-      #     fetch-depth: 0
-      #     repository: BorovlevAS/ci_cd_workflows
-      #     ref: 'main'
-      #     path: ci_cd_tools
-      # - name: Install Python
-      #   if: ${{!inputs.base_update}}
-      #   uses: actions/setup-python@v5
-      #   with:
-      #     python-version: '3.8.10'
       - name: Create SSH
         run: |
           install -m 600 -D /dev/null ~/.ssh/id_rsa
@@ -154,6 +142,13 @@ jobs:
           echo "=== UPDATING ODOO ==="
           sudo systemctl restart ${{inputs.ODOO_SERVICE}}
           sleep 10
+          # TEST
+          DATABASES=$(sudo -u ${{inputs.SERVER_USER}} bash -c "source $MAIN_PATH/venv/bin/activate && $SHELL -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"'")
+          # Обновление каждой базы данных из списка
+          for db in $DATABASES; do
+              echo "$db"
+          done
+          exit 100
           sudo -u ${{inputs.SERVER_USER}} bash -c "source $MAIN_PATH/venv/bin/activate && exec \"$SHELL\" -c \"click-odoo-update -c '$ODOO_CONFIG' -d '$ODOO_DB' --watcher-max-seconds 0 --log-level info\""
           EOF
           echo "=== START PRINT SCRIPT ==="
