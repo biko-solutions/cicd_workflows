@@ -136,6 +136,8 @@ jobs:
       #     fi
       #     EOF
       - name: Soft update (only changes)
+        env:
+          DATABASES: ${{'$DB_RESULT'}}
         if: ${{!inputs.base_update}}
         run: |
           cat <<EOF >> ~/update_script.sh
@@ -143,7 +145,7 @@ jobs:
           sudo systemctl restart ${{inputs.ODOO_SERVICE}}
           sleep 10
           # TEST
-          echo "DATABASES=$(sudo -u ${{inputs.SERVER_USER}} bash -c "source $MAIN_PATH/venv/bin/activate && $SHELL -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"'")" >> $GITHUB_ENV
+          DB_RESULT=$(sudo -u ${{inputs.SERVER_USER}} bash -c "source $MAIN_PATH/venv/bin/activate && $SHELL -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"'")
           # Обновление каждой базы данных из списка
           for db in $DATABASES; do
               echo "$db"
