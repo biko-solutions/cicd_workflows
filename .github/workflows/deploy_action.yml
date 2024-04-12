@@ -89,26 +89,26 @@ jobs:
             ssh -T ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null  
           fi          
           echo "#!/bin/bash" > ~/update_script.sh
-      - name: Update script - prepare
-        run: |
-          cat <<EOF >> ~/update_script.sh
-          echo "=== UPDATING SIMBIOZ REPOs ==="
-          if [[ -d $MAIN_PATH ]]; then
-            cd $MAIN_PATH
-            git submodule foreach --recursive git config --local --replace-all safe.directory '*'
-            git submodule foreach --recursive git checkout main
-            git fetch --all
-            git pull
-            git submodule foreach --recursive git reset --hard
-            git submodule sync --recursive
-            git submodule update --init --recursive
-            git submodule foreach --recursive 'git fetch origin --tags && git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo "main") && git pull'
-            sh odoo_set_icons.sh 2>/dev/null || true
-          else
-            echo "No folder $MAIN_PATH"
-            exit 100
-          fi
-          EOF
+      # - name: Update script - prepare
+      #   run: |
+      #     cat <<EOF >> ~/update_script.sh
+      #     echo "=== UPDATING SIMBIOZ REPOs ==="
+      #     if [[ -d $MAIN_PATH ]]; then
+      #       cd $MAIN_PATH
+      #       git submodule foreach --recursive git config --local --replace-all safe.directory '*'
+      #       git submodule foreach --recursive git checkout main
+      #       git fetch --all
+      #       git pull
+      #       git submodule foreach --recursive git reset --hard
+      #       git submodule sync --recursive
+      #       git submodule update --init --recursive
+      #       git submodule foreach --recursive 'git fetch origin --tags && git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo "main") && git pull'
+      #       sh odoo_set_icons.sh 2>/dev/null || true
+      #     else
+      #       echo "No folder $MAIN_PATH"
+      #       exit 100
+      #     fi
+      #     EOF
       # - name: Update from BIKO repo - prepare
       #   env:
       #     PTH_STRING: ${{'$PTH'}}
@@ -143,13 +143,13 @@ jobs:
           sudo systemctl restart ${{inputs.ODOO_SERVICE}}
           sleep 10
           # TEST
-          DATABASES=$(sudo -u ${{inputs.SERVER_USER}} bash -c "source $MAIN_PATH/venv/bin/activate && $SHELL -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"'")
+          echo "DATABASES=$(sudo -u ${{inputs.SERVER_USER}} bash -c "source $MAIN_PATH/venv/bin/activate && $SHELL -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"'")" >> $GITHUB_ENV
           # Обновление каждой базы данных из списка
           for db in $DATABASES; do
               echo "$db"
           done
           exit 100
-          sudo -u ${{inputs.SERVER_USER}} bash -c "source $MAIN_PATH/venv/bin/activate && exec \"$SHELL\" -c \"click-odoo-update -c '$ODOO_CONFIG' -d '$ODOO_DB' --watcher-max-seconds 0 --log-level info\""
+          # sudo -u ${{inputs.SERVER_USER}} bash -c "source $MAIN_PATH/venv/bin/activate && exec \"$SHELL\" -c \"click-odoo-update -c '$ODOO_CONFIG' -d '$ODOO_DB' --watcher-max-seconds 0 --log-level info\""
           EOF
           echo "=== START PRINT SCRIPT ==="
           cat ~/update_script.sh
