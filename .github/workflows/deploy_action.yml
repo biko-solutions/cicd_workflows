@@ -92,32 +92,32 @@ jobs:
             StrictHostKeyChecking no
           EOF
           ssh -T deploy > /dev/null
-      - name: Update repository
-        run: |
-          cat >~/update_script.sh <<EOF
-          #!/bin/bash
-          if [[ -d $MAIN_PATH ]]; then
-            cd $MAIN_PATH
-            git submodule foreach --recursive git config --local --replace-all safe.directory '*'
-            git submodule foreach --recursive git checkout main
-            git fetch --all
-            git pull
-            git submodule foreach --recursive git reset --hard
-            git submodule sync --recursive
-            git submodule update --init --recursive
-            git submodule foreach --recursive 'git fetch origin --tags && git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo "main") && git pull'
-            sh odoo_set_icons.sh 2>/dev/null || true
-          else
-            echo "No folder $MAIN_PATH"
-            exit 100
-          fi
-          EOF
-          ssh -o TCPKeepAlive=yes -o ServerAliveCountMax=30 -o ServerAliveInterval=60 deploy bash < ~/update_script.sh
+      # - name: Update repository
+      #   run: |
+      #     cat >~/update_script.sh <<EOF
+      #     #!/bin/bash
+      #     if [[ -d $MAIN_PATH ]]; then
+      #       cd $MAIN_PATH
+      #       git submodule foreach --recursive git config --local --replace-all safe.directory '*'
+      #       git submodule foreach --recursive git checkout main
+      #       git fetch --all
+      #       git pull
+      #       git submodule foreach --recursive git reset --hard
+      #       git submodule sync --recursive
+      #       git submodule update --init --recursive
+      #       git submodule foreach --recursive 'git fetch origin --tags && git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo "main") && git pull'
+      #       sh odoo_set_icons.sh 2>/dev/null || true
+      #     else
+      #       echo "No folder $MAIN_PATH"
+      #       exit 100
+      #     fi
+      #     EOF
+      #     ssh -o TCPKeepAlive=yes -o ServerAliveCountMax=30 -o ServerAliveInterval=60 deploy bash < ~/update_script.sh
       - name: Soft update (only changes)s
         if: ${{!inputs.base_update}}
         run: |
           echo "=== GET DATABASE LIST ==="
-          ssh deploy "sudo systemctl restart ${{inputs.ODOO_SERVICE}} && sleep 10"
+          # ssh deploy "sudo systemctl restart ${{inputs.ODOO_SERVICE}} && sleep 10"
           if [[ $ODOO_DB == -* ]]; then
             DB_RESULT=$(ssh deploy "sudo -u ${{inputs.SERVER_USER}} bash -c 'source $MAIN_PATH/venv/bin/activate && click-odoo-listdb -c \"$ODOO_CONFIG\"'")
           else
@@ -127,13 +127,13 @@ jobs:
           echo "$DB_RESULT"
           for db in $DB_RESULT; do
             echo "=== UPDATING DATABASE $db ==="
-            cat >~/update_script.sh <<EOF
-            #!/bin/bash
-            sudo -u ${{inputs.SERVER_USER}}
-            source $MAIN_PATH/venv/bin/activate
-            click-odoo-update -c '$ODOO_CONFIG' -d '$db' --watcher-max-seconds 0 --log-level info
-            EOF
-            ssh deploy bash < ~/update_script.sh
+            # cat >~/update_script.sh <<EOF
+            # #!/bin/bash
+            # sudo -u ${{inputs.SERVER_USER}}
+            # source $MAIN_PATH/venv/bin/activate
+            # click-odoo-update -c '$ODOO_CONFIG' -d '$db' --watcher-max-seconds 0 --log-level info
+            # EOF
+            # ssh deploy bash < ~/update_script.sh
           done
       #     cat <<EOF >> ~/update_script.sh
       #     echo "=== UPDATING ODOO ==="
