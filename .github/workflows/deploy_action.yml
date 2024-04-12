@@ -126,7 +126,8 @@ jobs:
           echo "=== DATABASES ==="
           echo "$DB_RESULT"
           for db in $DATABASES; do
-              ssh deploy "sudo -u ${{inputs.SERVER_USER}} bash -c \"source $MAIN_PATH/venv/bin/activate && exec \"$SHELL\" -c \" click-odoo-update -c '$ODOO_CONFIG' -d '$db' --watcher-max-seconds 0 --log-level info \"\" "
+            echo "=== UPDATING DATABASE $db ==="
+            ssh deploy "sudo -u ${{inputs.SERVER_USER}} bash -c \"source $MAIN_PATH/venv/bin/activate && exec \"$SHELL\" -c \" click-odoo-update -c '$ODOO_CONFIG' -d '$db' --watcher-max-seconds 0 --log-level info \"\" "
           done
       #     cat <<EOF >> ~/update_script.sh
       #     echo "=== UPDATING ODOO ==="
