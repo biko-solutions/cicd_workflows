@@ -96,9 +96,9 @@ jobs:
           echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{inputs.SERVER_ADDR}} > ~/.ssh/known_hosts
           if [[ ! -z "${{inputs.SERVER_PORT}}" ]]; then
-            ssh -Tv -p ${{inputs.SERVER_PORT}} ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null
+            ssh -T -p ${{inputs.SERVER_PORT}} ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null
           else
-            ssh -Tv ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null  
+            ssh -T ${{inputs.SERVER_USER}}@${{inputs.SERVER_ADDR}} > /dev/null  
           fi          
           echo "#!/bin/bash" > ~/update_script.sh
       - name: Update script - prepare
