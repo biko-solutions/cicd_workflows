@@ -83,7 +83,7 @@ jobs:
           install -m 600 -D /dev/null ~/.ssh/id_rsa
           echo "${{secrets.SSH_KEY}}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{inputs.SERVER_ADDR}} > ~/.ssh/known_hosts
-          cat >>~/.ssh/config <<EOF
+          cat >~/.ssh/config <<EOF
           Host deploy
             HostName ${{inputs.SERVER_ADDR}}
             User ${{inputs.SERVER_USER}}
@@ -94,7 +94,7 @@ jobs:
           ssh -T deploy > /dev/null
       - name: Update repository
         run: |
-          cat >>~/update_script.sh <<EOF
+          cat >~/update_script.sh <<EOF
           #!/bin/bash
           if [[ -d $MAIN_PATH ]]; then
             cd $MAIN_PATH
@@ -127,7 +127,13 @@ jobs:
           echo "$DB_RESULT"
           for db in $DATABASES; do
             echo "=== UPDATING DATABASE $db ==="
-            ssh deploy "sudo -u ${{inputs.SERVER_USER}} bash -c \"source $MAIN_PATH/venv/bin/activate && exec \"$SHELL\" -c \" click-odoo-update -c '$ODOO_CONFIG' -d '$db' --watcher-max-seconds 0 --log-level info \"\" "
+            cat >~/update_script.sh <<EOF
+            #!/bin/bash
+            sudo -u ${{inputs.SERVER_USER}}
+            source $MAIN_PATH/venv/bin/activate
+            click-odoo-update -c '$ODOO_CONFIG' -d '$db' --watcher-max-seconds 0 --log-level info
+            EOF
+            ssh deploy bash < ~/update_script.sh
           done
       #     cat <<EOF >> ~/update_script.sh
       #     echo "=== UPDATING ODOO ==="
