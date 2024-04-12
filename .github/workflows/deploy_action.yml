@@ -125,7 +125,7 @@ jobs:
           fi
           echo "=== DATABASES ==="
           echo "$DB_RESULT"
-          for db in $DATABASES; do
+          for db in $DB_RESULT; do
             echo "=== UPDATING DATABASE $db ==="
             cat >~/update_script.sh <<EOF
             #!/bin/bash
