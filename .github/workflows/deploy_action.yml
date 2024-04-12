@@ -128,11 +128,7 @@ jobs:
           echo "$DB_RESULT"
           for db in $DB_RESULT; do
             echo "=== UPDATING DATABASE $db ==="
-            cat >~/update_script.sh <<EOF
-            #!/bin/bash
-            sudo -u $SERVER_USER bash -c "source $MAIN_PATH/venv/bin/activate && click-odoo-update -c '$ODOO_CONFIG' -d '$db' --watcher-max-seconds 0 --log-level info"
-            EOF
-            ssh deploy bash < ~/update_script.sh
+            ssh deploy "sudo -u $SERVER_USER bash -c 'source $MAIN_PATH/venv/bin/activate && click-odoo-update -c \"$ODOO_CONFIG\" -d \"$db\" --watcher-max-seconds 0 --log-level info'"
           done
       #     cat <<EOF >> ~/update_script.sh
       #     echo "=== UPDATING ODOO ==="
