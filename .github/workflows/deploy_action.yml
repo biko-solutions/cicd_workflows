@@ -2,9 +2,6 @@ name: Deploy
 on:
   workflow_call:
     inputs:
-      # update_simbioz:
-      #   required: true
-      #   type: boolean
       base_update:
         required: false
         type: boolean
@@ -23,20 +20,13 @@ on:
       ODOO_SERVICE:
         required: true
         type: string
-      ODOO_USER:
-        required: true
-        type: string
-      ODOO_URI:
-        required: true
-        type: string
       ODOO_DB:
         required: true
         type: string
     secrets:
       SSH_KEY:
         required: true
-      ODOO_PASSWORD:
-        required: true
+
 env:
   MAIN_PATH: ${{inputs.PROJECT_PATH}}
   ODOO_CONFIG: ${{inputs.PROJECT_PATH}}/config_local/odoo-server.conf
@@ -64,14 +54,6 @@ jobs:
           fi
           if [[ -z "${{inputs.ODOO_SERVICE}}" ]]; then
             echo "ODOO_SERVICE is not set"
-            exit 100
-          fi
-          if [[ -z "${{inputs.ODOO_USER}}" ]]; then
-            echo "ODOO_USER is not set"
-            exit 100
-          fi
-          if [[ -z "${{inputs.ODOO_URI}}" ]]; then
-            echo "ODOO_URI is not set"
             exit 100
           fi
           if [[ -z "${{inputs.ODOO_DB}}" ]]; then
