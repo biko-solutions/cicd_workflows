@@ -110,7 +110,7 @@ jobs:
           echo "$DB_RESULT"
           for db in $DB_RESULT; do
             echo "=== UPDATING DATABASE $db ==="
-            ssh deploy "sudo -u $SERVER_USER bash -c 'source $MAIN_PATH/venv/bin/activate && click-odoo-update -c \"$ODOO_CONFIG\" -d \"$db\" --watcher-max-seconds 0 --log-level info'"
+            ssh -o TCPKeepAlive=yes -o ServerAliveCountMax=100 -o ServerAliveInterval=60 deploy "sudo -u $SERVER_USER bash -c 'source $MAIN_PATH/venv/bin/activate && click-odoo-update -c \"$ODOO_CONFIG\" -d \"$db\" --watcher-max-seconds 0 --log-level info'"
           done
       - name: Hard update (base module)
         if: ${{inputs.base_update}}
@@ -126,8 +126,7 @@ jobs:
           echo "$DB_RESULT"
           for db in $DB_RESULT; do
             echo "=== UPDATING DATABASE $db ==="
-            # ssh deploy "sudo -u $SERVER_USER bash -c '$MAIN_PATH/venv/bin/python3 $MAIN_PATH/odoo-bin -c \"$ODOO_CONFIG\" -d \"$db\" -u base --logfile= --log-level=error --stop-after-init'"
-            ssh deploy "sudo -u $SERVER_USER bash -c 'source $MAIN_PATH/venv/bin/activate && click-odoo-update -c \"$ODOO_CONFIG\" -d \"$db\" --update-all --watcher-max-seconds 0 --log-level info'"
+            ssh -o TCPKeepAlive=yes -o ServerAliveCountMax=100 -o ServerAliveInterval=60 deploy "sudo -u $SERVER_USER bash -c 'source $MAIN_PATH/venv/bin/activate && click-odoo-update -c \"$ODOO_CONFIG\" -d \"$db\" --update-all --watcher-max-seconds 0 --log-level info'"
           done
           ssh deploy "sudo systemctl start ${{inputs.ODOO_SERVICE}} && sleep 10"
           echo "=== SHOW STATUS ODOO ==="
