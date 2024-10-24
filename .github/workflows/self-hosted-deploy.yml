@@ -58,6 +58,7 @@ jobs:
       - uses: actions/checkout@v4.1.7
         with:
           repository: biko-solutions/cicd_workflows
+          path: cicd_workflows
           fetch-depth: 0
       - name: List files
         run: ls -la
