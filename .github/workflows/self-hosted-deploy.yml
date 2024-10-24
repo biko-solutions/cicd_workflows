@@ -57,7 +57,7 @@ jobs:
       #     fi
       - uses: actions/checkout@v4.1.7
         with:
-          repository: biko-solutions/cicd_workflows
+          repository: biko-solutions/cicd_workflows.git
           path: cicd_workflows
           ref: main
           fetch-depth: 0
