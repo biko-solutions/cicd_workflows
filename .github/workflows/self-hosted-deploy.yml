@@ -57,6 +57,7 @@ jobs:
       #     fi
       - uses: actions/checkout@v4.1.7
         with:
+          repository: biko-solutions/cicd_workflows
           fetch-depth: 0
       - name: List files
         run: ls -la
@@ -134,3 +135,5 @@ jobs:
       #       sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
       #       sudo -u $SERVER_USER "No submodule updates."
       #     fi
+      - uses: colpal/actions-clean@v1
+        if: ${{ always() }}
