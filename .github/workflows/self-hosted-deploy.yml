@@ -59,6 +59,7 @@ jobs:
         with:
           repository: biko-solutions/cicd_workflows
           path: cicd_workflows
+          ref: main
           fetch-depth: 0
       - name: List files
         run: ls -la
