@@ -41,6 +41,8 @@ jobs:
     runs-on:
       group: ${{inputs.RUNNER_GROUP}}
     steps:
+      - name: Check
+        run: echo ${{ github.repository }}
       # - name: Check settings
       #   run: |
       #     if [[ ! -d "$MAIN_PATH" ]]; then
