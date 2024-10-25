@@ -36,10 +36,6 @@ env:
   PYTHON_SCRIPT: ${{inputs.MAIN_PATH}}/scripts/update_odoo.py
   USE_VENV: ${{inputs.USE_VENV}}
 
-permissions:
-  contents: read
-  id-token: write
-
 jobs:
   deploy:
     runs-on:
@@ -64,7 +60,7 @@ jobs:
       - uses: actions/checkout@v4.2.2
         with:
           repository: biko-solutions/cicd_workflows
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CICD_TOKEN }}
           fetch-depth: 0
       - name: List files
         run: ls -la
