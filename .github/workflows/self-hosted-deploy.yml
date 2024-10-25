@@ -36,6 +36,8 @@ env:
   PYTHON_SCRIPT: ${{inputs.MAIN_PATH}}/scripts/update_odoo.py
   USE_VENV: ${{inputs.USE_VENV}}
 
+permissions:
+  contents: read
 jobs:
   deploy:
     runs-on:
