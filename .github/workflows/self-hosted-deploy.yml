@@ -36,10 +36,6 @@ env:
   PYTHON_SCRIPT: ${{inputs.MAIN_PATH}}/scripts/update_odoo.py
   USE_VENV: ${{inputs.USE_VENV}}
 
-permissions:
-  id-token: write # IMPORTANT: this permission is mandatory for trusted publishing.
-  contents: read
-
 jobs:
   deploy:
     runs-on:
