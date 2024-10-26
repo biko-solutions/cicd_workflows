@@ -69,7 +69,7 @@ jobs:
           echo "PYTHON_SCRIPT=\"$PYTHON_SCRIPT\""
 
       - name: Update repository
-        uses: biko-solutions/cicd_workflows/.github/actions/biko_struct_update_repo
+        uses: biko-solutions/cicd_workflows/.github/actions/biko_struct_update_repo@main
         with:
           MAIN_PATH: ${{env.MAIN_PATH}}
           # - name: Update repository
