@@ -21,13 +21,13 @@ runs:
       run: |
         echo -e "\033[32m============= CONGIGURING SSH CONNECTION =============\033[0m"
         install -m 600 -D /dev/null ~/.ssh/id_rsa
-        echo "${{SSH_KEY}}" > ~/.ssh/id_rsa
-        ssh-keyscan -H ${{SERVER_ADDR}} > ~/.ssh/known_hosts
+        echo "$SSH_KEY" > ~/.ssh/id_rsa
+        ssh-keyscan -H $SERVER_ADDR > ~/.ssh/known_hosts
         cat >~/.ssh/config <<EOF
         Host deploy
-          HostName ${{SERVER_ADDR}}
+          HostName $SERVER_ADDR
           User $SERVER_USER
-          Port ${{SERVER_PORT}}
+          Port $SERVER_PORT
           IdentityFile ~/.ssh/id_rsa
           StrictHostKeyChecking no
         EOF
