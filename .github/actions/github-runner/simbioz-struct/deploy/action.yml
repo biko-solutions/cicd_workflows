@@ -1,0 +1,143 @@
+name: Deploy ACTION
+
+inputs:
+  base_update:
+    required: false
+    type: boolean
+  update_simbioz:
+    required: true
+    type: boolean
+  MAIN_PATH:
+    required: true
+    type: string
+  CUSTOM_PATH:
+    required: true
+    type: string
+  ODOO_SERVICE:
+    required: true
+    type: string
+  SERVER_USER:
+    required: true
+    type: string
+  SERVER_ADDR:
+    required: true
+    type: string
+  SSH_PORT:
+    required: false
+    default: 22
+    type: string
+  SERVER_SSH:
+    requred: true
+  USE_VENV:
+    required: true
+    type: string
+  ODOO_DB:
+    required: false
+    type: string
+  CICD_TOKEN:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check settings
+      run: |
+        echo -e "\033[32m============= CHECKING PARAMETERS =============\033[0m"
+        if [[ -z "$SERVER_ADDR" ]]; then
+          echo -e "\033[31mSERVER_ADDR is not set\033[0m"
+          exit 100
+        fi
+        if [[ -z "$MAIN_PATH" ]]; then
+          echo -e "\033[31mFolder $MAIN_PATH does not specified.\033[0m"
+          exit 100
+        fi
+        if [[ -z "$SERVER_USER" ]]; then
+          echo -e "\033[31mSERVER_USER variable is not set.\033[0m"
+          exit 100
+        fi
+        if [[ -z "$ODOO_SERVICE" ]]; then
+          echo -e "\033[31mODOO_SERVICE variable is not set.\033[0m"
+          exit 100
+        fi
+      shell: bash
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        SERVER_ADDR: ${{ inputs.SERVER_ADDR }}
+
+    - name: Configure SSH
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/setup-ssh@main
+      with:
+        SERVER_SSH: ${{inputs.SERVER_SSH}}
+        SERVER_ADDR: ${{inputs.SERVER_ADDR}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
+        SSH_PORT: ${{inputs.SSH_PORT}}
+
+    - name: Install UPDATE_ODOO.PY script
+      id: create-python-script
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/setup-remote-script@main
+      with:
+        CICD_TOKEN: ${{inputs.CICD_TOKEN}}
+
+    - name: Update repository
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/simbioz-struct/update-repo@main
+      with:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+
+    # - name: Get database list
+    #   id: get-db-list
+    #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/get-db-list@main
+    #   with:
+    #     MAIN_PATH: ${{inputs.MAIN_PATH}}
+    #     SERVER_USER: ${{inputs.SERVER_USER}}
+    #     USE_VENV: ${{inputs.USE_VENV}}
+    #     ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+    #     ODOO_DB: ${{inputs.ODOO_DB}}
+
+    # - name: Debug
+    #   run: |
+    #     echo 'SCRIPTDIR ==>' $SCRIPTDIR
+    #     echo 'PYTHON_SCRIPT ==>' $PYTHON_SCRIPT
+    #     echo 'DB_RESULT ==>' $DB_RESULT
+    #   shell: bash
+    #   env:
+    #     SCRIPTDIR: ${{env.SCRIPTDIR}}
+    #     PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+    #     DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
+
+    # - name: Soft update (only changes)
+    #   if: ${{ inputs.base_update == 'false' }}
+    #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/update-changed@main
+    #   with:
+    #     ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+    #     USE_VENV: ${{ inputs.USE_VENV }}
+    #     SERVER_USER: ${{ inputs.SERVER_USER }}
+    #     PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+    #     DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
+    #     ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
+
+    # - name: Hard update (base module)
+    #   if: ${{ inputs.base_update == 'true' }}
+    #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/update-base@main
+    #   with:
+    #     ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+    #     USE_VENV: ${{ inputs.USE_VENV }}
+    #     SERVER_USER: ${{ inputs.SERVER_USER }}
+    #     PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+    #     DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
+    #     ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
+
+    - name: Clear scripts and data
+      run: |
+        echo -e "::group::\033[32m ============= GARBAGE COLLECTING =============\033[0m"
+        ssh deploy "rm -rf $SCRIPTDIR"
+      shell: bash
+      env:
+        SCRIPTDIR: ${{env.SCRIPTDIR}}
+
+    - uses: colpal/actions-clean@v1
+      if: ${{ always() }}

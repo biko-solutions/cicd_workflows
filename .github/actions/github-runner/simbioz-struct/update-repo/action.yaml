@@ -1,0 +1,68 @@
+name: Update repository (BIKO Template)
+
+inputs:
+  update_simbioz:
+    required: true
+    type: boolean
+  MAIN_PATH:
+    required: true
+    type: string
+  CUSTOM_PATH:
+    required: true
+    type: string
+  SERVER_USER:
+    requred: true
+    type: string
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Update from SIMBIOZ repo
+      if: ${{ inputs.update_simbioz == 'true' }}
+      run: |
+        echo -e "::group::\033[32m============= UPDATING SIMBIOZ REPOSITORIES =============\033[0m"
+        cat >~/update_script.sh <<EOF
+        #!/bin/bash
+        cd $MAIN_PATH
+        sudo -u $SERVER_USER git submodule foreach --recursive git config --local --replace-all safe.directory '*'
+        sudo -u $SERVER_USER git submodule foreach --recursive git config --local --add safe.directory '*'
+        sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard
+        sudo -u $SERVER_USER git submodule foreach --recursive git pull
+        sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
+        EOF
+        cat ~/update_script.sh
+        # ssh deploy bash < ~/update_script.sh
+        echo "::endgroup::"
+      shell: bash
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+
+    - name: Update CUSTOM repo
+      run: |
+        echo -e "::group::\033[32m============= UPDATING CUSTOM REPOSITORIES =============\033[0m"
+        cat >~/update_script.sh <<EOF
+        if [[ -n "$CUSTOM_PATH" ]]; then
+          IFS=',' read -ra PATHS <<<"$CUSTOM_PATH"
+          for PTH in "${PATHS[@]}"; do
+            if [[ -d "$PTH" ]]; then
+              cd "$PTH"
+              echo "Current directory: " && pwd
+              if [[ $? -eq 0 ]]; then
+                sudo -u $SERVER_USER git reset --hard
+                sudo -u $SERVER_USER git pull
+              fi
+            else
+              echo -e "\033[34mNo folder $PTH\033[0m"
+            fi
+          done
+        else
+          echo -e "\033[34mNO CUSTOM FOLDERS SPECIFIED\033[0m"
+        fi
+        EOF
+        cat ~/update_script.sh
+        echo "::endgroup::"
+      shell: bash
+      env:
+        CUSTOM_PATH: ${{inputs.CUSTOM_PATH}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
