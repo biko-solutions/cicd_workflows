@@ -61,4 +61,5 @@ runs:
         DB_LIST: ${{ inputs.DB_LIST }}
         ODOO_CONFIG: ${{ inputs.ODOO_CONFIG }}
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        exclusive_update: ${{ inputs.exclusive_update }}
       shell: bash
