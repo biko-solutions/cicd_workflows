@@ -33,3 +33,4 @@ runs:
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
+        SCRIPTDIR: ${{ env.SCRIPTDIR }}
