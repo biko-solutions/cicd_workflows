@@ -20,6 +20,7 @@ runs:
   using: 'composite'
   steps:
     - name: Get database list
+      id: get-db-list
       run: |
         echo -e "\033[32m=== GETING DATABASE LIST ===\033[0m"
         if [[ "$ODOO_DB" == -* ]]; then
