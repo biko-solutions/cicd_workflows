@@ -28,7 +28,7 @@ runs:
         DIR="/tmp/odoo_script_$(date +'%d_%m_%Y_%H_%M_%S')"
         echo "SCRIPTDIR=$DIR" >> $GITHUB_ENV
         echo "$DIR"
-        ssh deploy bash -c "echo $DIR"
+        ssh deploy bash -c "export DIR=$DIR; echo \$DIR"
         # ssh deploy bash -c "export DIR=$DIR; mkdir -p \$DIR"
         # scp ./scripts/update_odoo.py deploy:"$DIR/update_odoo.py"
         # ssh deploy bash -c "cd \"$DIR\" && python3 -m venv venv"
