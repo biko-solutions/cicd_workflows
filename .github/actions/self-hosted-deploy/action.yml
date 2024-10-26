@@ -23,16 +23,15 @@ inputs:
     required: false
     type: string
 
-env:
-  MAIN_PATH: ${{inputs.MAIN_PATH}}
-  ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
-  ODOO_DB: ${{inputs.ODOO_DB}}
-  ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
-  SERVER_USER: ${{inputs.SERVER_USER}}
-  USE_VENV: ${{inputs.USE_VENV}}
-
 jobs:
   deploy:
+    env:
+      MAIN_PATH: ${{inputs.MAIN_PATH}}
+      ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+      ODOO_DB: ${{inputs.ODOO_DB}}
+      ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
+      SERVER_USER: ${{inputs.SERVER_USER}}
+      USE_VENV: ${{inputs.USE_VENV}}
     steps:
       - name: Check settings
         run: |
