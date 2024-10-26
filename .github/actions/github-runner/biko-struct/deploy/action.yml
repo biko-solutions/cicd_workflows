@@ -132,7 +132,7 @@ runs:
         #!/bin/bash
         cd $MAIN_PATH
         sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard > /dev/null 2>&1
-        if [[ -n $(sudo -u $SERVER_USER git status -s) ]]; then
+        if [[ -n $(sudo -u \"$SERVER_USER\" git status -s) ]]; then
           sudo -u $SERVER_USER git add -A
           sudo -u $SERVER_USER git commit -m "Update submodules"
           sudo -u $SERVER_USER git push origin $(git branch --show-current)
