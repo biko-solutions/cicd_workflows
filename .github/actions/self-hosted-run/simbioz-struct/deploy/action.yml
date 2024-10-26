@@ -76,7 +76,7 @@ runs:
       shell: bash
 
     - name: Update repository
-      uses: biko-solutions/cicd_workflows/.github/actions/simbioz-struct/self-hosted/update-repo@main
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/simbioz-struct/update-repo@main
       with:
         update_simbioz: ${{ inputs.update_simbioz }}
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
@@ -85,7 +85,7 @@ runs:
 
     - name: Get database list
       id: get-db-list
-      uses: biko-solutions/cicd_workflows/.github/actions/common/get-db-list@main
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/get-db-list@main
       with:
         MAIN_PATH: ${{inputs.MAIN_PATH}}
         SERVER_USER: ${{inputs.SERVER_USER}}
@@ -95,7 +95,7 @@ runs:
 
     - name: Soft update (only changes)
       if: ${{ inputs.base_update == 'false' }}
-      uses: biko-solutions/cicd_workflows/.github/actions/common/update-changed@main
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-changed@main
       with:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
@@ -107,7 +107,7 @@ runs:
 
     - name: Hard update (base module)
       if: ${{ inputs.base_update == 'true' }}
-      uses: biko-solutions/cicd_workflows/.github/actions/common/update-base@main
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-base@main
       with:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
