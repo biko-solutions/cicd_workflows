@@ -30,7 +30,7 @@ runs:
   steps:
     - name: Check settings
       run: |
-        echo -e "\033[32m \U00000031\U000020E3 ============= CHECKING PARAMETERS =============\033[0m"
+        echo -e "\033[32m============= CHECKING PARAMETERS =============\033[0m"
         if [[ ! -d "$MAIN_PATH" ]]; then
           echo "Folder $MAIN_PATH does not exist."
           exit 100
@@ -50,7 +50,7 @@ runs:
         SERVER_USER: ${{inputs.SERVER_USER}}
 
     - name: Log checkout
-      run: echo -e "\033[32m \U00000032\U000020E3 ============= PULLING THE CICD REPO =============\033[0m"
+      run: echo -e "\033[32m============= PULLING THE CICD REPO =============\033[0m"
       shell: bash
 
     - uses: actions/checkout@v4.2.2
@@ -114,6 +114,7 @@ runs:
 
     - name: Update submodules HASH
       run: |
+        echo -e "::group::\033[32m ============= UPDATING SUBMODULES HASH =============\033[0m"
         cd $MAIN_PATH
         sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard > /dev/null 2>&1
         if [[ -n $(sudo -u $SERVER_USER git status -s) ]]; then
@@ -125,6 +126,7 @@ runs:
           sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
           echo "No submodule updates."
         fi
+        echo "::endgroup::"
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
