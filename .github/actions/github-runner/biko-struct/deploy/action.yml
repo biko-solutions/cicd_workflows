@@ -125,25 +125,28 @@ runs:
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
-    # - name: Update submodules HASH
-    #   run: |
-    #     echo -e "::group::\033[32m ============= UPDATING SUBMODULES HASH =============\033[0m"
-    #     cd $MAIN_PATH
-    #     sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard > /dev/null 2>&1
-    #     if [[ -n $(sudo -u $SERVER_USER git status -s) ]]; then
-    #       sudo -u $SERVER_USER git add -A
-    #       sudo -u $SERVER_USER git commit -m "Update submodules"
-    #       sudo -u $SERVER_USER git push origin $(git branch --show-current)
-    #       sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
-    #     else
-    #       sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
-    #       echo "No submodule updates."
-    #     fi
-    #     echo "::endgroup::"
-    #   env:
-    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
-    #     SERVER_USER: ${{ inputs.SERVER_USER }}
-    #   shell: bash
+    - name: Update submodules HASH
+      run: |
+        echo -e "::group::\033[32m ============= UPDATING SUBMODULES HASH =============\033[0m"
+        cat >~/update_script.sh <<EOF
+        cd $MAIN_PATH
+        sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard > /dev/null 2>&1
+        if [[ -n $(sudo -u $SERVER_USER git status -s) ]]; then
+          sudo -u $SERVER_USER git add -A
+          sudo -u $SERVER_USER git commit -m "Update submodules"
+          sudo -u $SERVER_USER git push origin $(git branch --show-current)
+          sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
+        else
+          sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
+          echo "No submodule updates."
+        fi
+        EOF
+        cat ~/update_script.sh
+        echo "::endgroup::"
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+      shell: bash
 
     - uses: colpal/actions-clean@v1
       if: ${{ always() }}
