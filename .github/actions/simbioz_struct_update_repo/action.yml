@@ -9,7 +9,7 @@ inputs:
     type: string
   update_simbioz:
     required: true
-    type: string
+    type: boolean
 
 runs:
   using: 'composite'
