@@ -89,6 +89,7 @@ def monitor_and_update(
 
     def task_done(future, db):
         nonlocal active_tasks
+        nonlocal error_encountered
         try:
             result = future.result()
             if result != 0:  # If the result is not 0, set error_encountered to True
