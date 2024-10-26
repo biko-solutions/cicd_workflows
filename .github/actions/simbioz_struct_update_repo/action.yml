@@ -1,12 +1,6 @@
 name: Update repository (BIKO Template)
 
 inputs:
-  MAIN_PATH:
-    required: true
-    type: string
-  CUSTOM_PATH:
-    required: true
-    type: string
   update_simbioz:
     required: true
     type: boolean
@@ -18,7 +12,7 @@ runs:
       if: ${{ inputs.update_simbioz == 'true' }}
       run: |
         echo ===== Update from SIMBIOZ repo ====
-        cd ${{inputs.MAIN_PATH}}
+        cd ${{MAIN_PATH}}
         sudo -u $SERVER_USER git submodule foreach --recursive git config --local --replace-all safe.directory '*'
         sudo -u $SERVER_USER git submodule foreach --recursive git config --local --add safe.directory '*'
         sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard
@@ -30,8 +24,9 @@ runs:
         PTH_STRING: ${{'$PTH'}}
       run: |
         echo ===== Update from BIKO repo ====
-        if [[ -n "${{inputs.CUSTOM_PATH}}" ]]; then
-          for PTH in {${{inputs.CUSTOM_PATH}}}
+        echo ${{CUSTOM_PATH}}
+        if [[ -n "${{CUSTOM_PATH}}" ]]; then
+          for PTH in {${{CUSTOM_PATH}}}
           do
             if [[ -d "$PTH_STRING" ]]; then
               cd "$PTH_STRING"

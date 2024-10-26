@@ -83,8 +83,6 @@ jobs:
       - name: Update repository
         uses: biko-solutions/cicd_workflows/.github/actions/simbioz_struct_update_repo@main
         with:
-          MAIN_PATH: ${{env.MAIN_PATH}}
-          CUSTOM_PATH: ${{env.CUSTOM_PATH}}
           update_simbioz: ${{inputs.update_simbioz}}
 
       - name: Get database list
