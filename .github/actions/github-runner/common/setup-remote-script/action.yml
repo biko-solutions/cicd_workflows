@@ -27,10 +27,9 @@ runs:
         echo -e "\033[32m============= INSTALLING UPDATE SCRIPT =============\033[0m"
         DIR="/tmp/odoo_script_$(date +'%d_%m_%Y_%H_%M_%S')"
         echo "SCRIPTDIR=$DIR" >> $GITHUB_ENV
-        echo 'scriptdir ==>' "$DIR"
         ssh deploy "mkdir -p $DIR"
         scp ./scripts/update_odoo.py deploy:"$DIR/update_odoo.py"
-        ssh deploy "cd \"$DIR\" && ls -la"
-        # ssh deploy bash -c "ls -la \"$DIR\""
+        ssh deploy "cd \"$DIR\" && python3 -m venv venv"
+        ssh deploy "ls -la \"$DIR\""
         # echo "PYTHON_SCRIPT=\"$DIR/venv/bin/python3 $DIR/scripts/update_odoo.py\"" >> $GITHUB_OUTPUT
       shell: bash
