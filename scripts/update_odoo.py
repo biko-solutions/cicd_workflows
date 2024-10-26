@@ -33,7 +33,7 @@ def update_database(
             server_user,
             "bash",
             "-c",
-            f"source '{main_path}/venv/bin/activate' && click-odoo-update -c '{config_path}' -d '{db_name}' --watcher-max-seconds 0 --log-level error",
+            f"source '{main_path}/venv/bin/activate' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level error",
         ]
     else:
         command = [
@@ -42,11 +42,13 @@ def update_database(
             server_user,
             "bash",
             "-c",
-            f"click-odoo-update -c '{config_path}' -d '{db_name}' --watcher-max-seconds 0 --log-level error",
+            f"click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level error",
         ]
 
     if hard_update:
         command[-1] += " --update-all"
+
+    error_found = False
 
     logger.info(f"Starting database update for {db_name}")
     try:
@@ -56,7 +58,7 @@ def update_database(
         )
     except subprocess.CalledProcessError as e:
         logger.error(f"Failed to update database {db_name}. Error: {e}")
-        return
+        error_found = True
 
     # Always check logs for errors, regardless of the process exit code
     with open(log_file, "r") as file:
@@ -67,6 +69,9 @@ def update_database(
                 f"Errors found during the update of database {db_name}. Check the logs for more information."
             )
             logger.error(f"Logs for {db_name}:\n{log_content}")
+            error_found = True
+
+    return 1 if error_found else 0
 
 
 def monitor_and_update(
@@ -80,13 +85,19 @@ def monitor_and_update(
     use_venv=True,
 ):
     active_tasks = 0
+    error_encountered = False
 
     def task_done(future, db):
         nonlocal active_tasks
         try:
-            future.result()
-            logger.info(f"Database update for {db} completed successfully.")
+            result = future.result()
+            if result != 0:  # If the result is not 0, set error_encountered to True
+                error_encountered = True
+                logger.error(f"Database update for {db} failed.")
+            else:
+                logger.info(f"Database update for {db} completed successfully.")
         except Exception as exc:
+            error_encountered = True
             logger.error(f"Database update for {db} failed: {exc}")
         finally:
             active_tasks -= 1
@@ -116,6 +127,11 @@ def monitor_and_update(
                     break
                 else:
                     time.sleep(5)
+
+    if error_encountered:
+        sys.exit(1)
+    else:
+        sys.exit(0)
 
 
 if __name__ == "__main__":
