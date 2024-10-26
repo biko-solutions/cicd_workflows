@@ -45,6 +45,7 @@ runs:
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag
         update_status=$?
+        echo -e '\033[32mUpdate status ===>' $update_status '\033[0m'
 
         sudo systemctl restart $ODOO_SERVICE
 
