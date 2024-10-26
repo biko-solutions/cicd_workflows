@@ -67,7 +67,7 @@ jobs:
 
       - name: Check script path
         run: |
-          echo $PYTHON_SCRIPT
+          $PYTHON_SCRIPT
         env:
           PYTHON_SCRIPT: ${{ env.PYTHON_SCRIPT }}
 
