@@ -1,0 +1,35 @@
+name: Update repository (BIKO Template)
+
+inputs:
+  MAIN_PATH:
+    required: true
+    type: string
+  SERVER_USER:
+    requred: true
+    type: string
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Update repository
+      run: |
+        echo -e "::group::\033[32m============= UPDATING REPOSITORY =============\033[0m"
+        cat >$DIR/update_script.sh <<"EOF"
+        #!/bin/bash
+        cd $MAIN_PATH
+        sudo -u $SERVER_USER git config --local --add safe.directory $MAIN_PATH
+        sudo -u $SERVER_USER git submodule foreach --recursive git config --local --add safe.directory '*'
+        sudo -u $SERVER_USER git fetch --all
+        sudo -u $SERVER_USER git pull
+        sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard
+        sudo -u $SERVER_USER git submodule sync --recursive
+        sudo -u $SERVER_USER git submodule update --init --recursive --remote
+        sudo -u $SERVER_USER git submodule foreach --recursive 'git fetch origin --tags && git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo "main") && git pull'
+        sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
+        EOF
+        cat $DIR/update_script.sh
+        echo "::endgroup::"
+      shell: bash
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}

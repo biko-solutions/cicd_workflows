@@ -68,34 +68,16 @@ runs:
         SERVER_USER: ${{inputs.SERVER_USER}}
         SSH_PORT: ${{inputs.SSH_PORT}}
 
-    # - name: Log checkout
-    #   run: echo -e "\033[32m============= PULLING THE CICD REPO =============\033[0m"
-    #   shell: bash
+    - name: Install UPDATE_ODOO.PY script
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/setup-remote-script@main
+      with:
+        CICD_TOKEN: ${{inputs.CICD_TOKEN}}
 
-    # - uses: actions/checkout@v4.2.2
-    #   with:
-    #     repository: biko-solutions/cicd_workflows
-    #     token: ${{ inputs.CICD_TOKEN }}
-    #     fetch-depth: 0
-    #     show-progress: false
-
-    # - name: Set venv
-    #   id: create-python-script
-    #   run: |
-    #     echo -e "::group::\033[32m ============= CREATING PYTHON VENV =============\033[0m"
-    #     python3 -m venv ./venv
-    #     source ./venv/bin/activate
-    #     pip install psutil
-    #     deactivate
-    #     echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_OUTPUT
-    #     echo "::endgroup::"
-    #   shell: bash
-
-    # - name: Update repository
-    #   uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/biko-struct/update-repo@main
-    #   with:
-    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
-    #     SERVER_USER: ${{ inputs.SERVER_USER }}
+    - name: Update repository
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/biko-struct/update-repo/action.yaml@main
+      with:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
 
     # - name: Get database list
     #   id: get-db-list
