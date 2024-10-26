@@ -42,7 +42,7 @@ runs:
         echo -e "\033[34m=== STARTING ODOO ===\033[0m"
         ssh deploy "sudo systemctl start $ODOO_SERVICE && sleep 10"
 
-        echo -e "\033[34m=== SHOW STATUS ODOO ===\033[0m"
+        echo -e "\033[34m=== SHOW ODOO STATUS ===\033[0m"
         ssh deploy "sudo systemctl status $ODOO_SERVICE"
         echo "::endgroup::"
       env:
