@@ -1,5 +1,10 @@
 name: Update repository (BIKO Template)
 
+inputs:
+  MAIN_PATH:
+    required: true
+    type: string
+
 runs:
   using: 'composite'
   steps:
@@ -16,3 +21,5 @@ runs:
         sudo -u $SERVER_USER git submodule foreach --recursive 'git fetch origin --tags && git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo "main") && git pull'
         sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
       shell: bash
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
