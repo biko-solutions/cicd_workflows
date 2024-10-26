@@ -63,7 +63,7 @@ runs:
     - name: Set venv
       id: create-python-script
       run: |
-        run: echo -e "\033[32m ============= CREATING PYTHON VENV =============\033[0m"
+        echo -e "\033[32m ============= CREATING PYTHON VENV =============\033[0m"
         echo -e "\033[32m ::group::Setting VENV Log\033[320"
         python3 -m venv ./venv
         source ./venv/bin/activate
