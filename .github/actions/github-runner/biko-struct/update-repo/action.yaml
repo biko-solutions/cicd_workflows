@@ -14,10 +14,10 @@ runs:
     - name: Update repository
       run: |
         echo -e "::group::\033[32m============= UPDATING REPOSITORY =============\033[0m"
-        cat >~/update_script.sh <<"EOF"
+        cat >~/update_script.sh <<EOF
         #!/bin/bash
         cd $MAIN_PATH
-        sudo -u \"$SERVER_USER\" git config --local --add safe.directory $MAIN_PATH
+        sudo -u $SERVER_USER git config --local --add safe.directory $MAIN_PATH
         sudo -u $SERVER_USER git submodule foreach --recursive git config --local --add safe.directory '*'
         sudo -u $SERVER_USER git fetch --all
         sudo -u $SERVER_USER git pull
