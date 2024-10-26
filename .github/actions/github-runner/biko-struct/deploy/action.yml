@@ -99,7 +99,7 @@ runs:
       env:
         SCRIPTDIR: ${{env.SCRIPTDIR}}
         PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
-        DB_RESULT: ${{ steps.create-python-script.outputs.DB_RESULT }}
+        DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
 
     - name: Soft update (only changes)
       if: ${{ inputs.base_update == 'false' }}
