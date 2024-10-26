@@ -32,7 +32,12 @@ runs:
         sudo systemctl restart $ODOO_SERVICE && sleep 10
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag
+        update_status=$?
         echo "::endgroup::"
+        if [ $update_status -ne 0 ]; then
+          echo -e "\033[31mError: Database update failed.\033[0m"
+          exit 1
+        fi
       env:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
