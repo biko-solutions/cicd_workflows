@@ -31,5 +31,6 @@ runs:
         scp ./scripts/update_odoo.py deploy:"$DIR/update_odoo.py"
         ssh deploy "cd \"$DIR\" && python3 -m venv venv"
         ssh deploy "touch $DIR/update_script.sh"
+        ssh deploy "cd \"$DIR\"; ls -la"
         echo "PYTHON_SCRIPT=\"$DIR/venv/bin/python3 $DIR/scripts/update_odoo.py\"" >> $GITHUB_OUTPUT
       shell: bash
