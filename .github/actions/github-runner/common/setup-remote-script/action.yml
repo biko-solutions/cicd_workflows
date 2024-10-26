@@ -29,8 +29,8 @@ runs:
         echo "SCRIPTDIR=$DIR" >> $GITHUB_ENV
         echo 'scriptdir ==>' "$DIR"
         ssh deploy "mkdir -p $DIR"
-        # scp ./scripts/update_odoo.py deploy:"$DIR/update_odoo.py"
-        # ssh deploy bash -c "cd \"$DIR\" && python3 -m venv venv"
+        scp ./scripts/update_odoo.py deploy:"$DIR/update_odoo.py"
+        ssh deploy "cd \"$DIR\" && ls -la"
         # ssh deploy bash -c "ls -la \"$DIR\""
         # echo "PYTHON_SCRIPT=\"$DIR/venv/bin/python3 $DIR/scripts/update_odoo.py\"" >> $GITHUB_OUTPUT
       shell: bash
