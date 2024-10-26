@@ -142,8 +142,8 @@ jobs:
             sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
           else
             sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
-            sudo -u $SERVER_USER "No submodule updates."
+            echo "No submodule updates."
           fi
 
-      # - uses: colpal/actions-clean@v1
-      #   if: ${{ always() }}
+      - uses: colpal/actions-clean@v1
+        if: ${{ always() }}
