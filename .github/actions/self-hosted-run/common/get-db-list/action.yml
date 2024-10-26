@@ -23,13 +23,13 @@ runs:
       id: get-db-list
       run: |
         echo -e "\033[32m=== OBTAINING DATABASE LIST ===\033[0m"
-        echo "\033[32mUSE_VENV ==> " $USE_VENV "\033[32m"
-        echo "\033[32mWHOAMI ==> " $(whoami) "\033[32m"
+        echo -e "\033[32mUSE_VENV ==> " $USE_VENV "\033[0m"
+        echo -e "\033[32mWHOAMI ==> " $(whoami) "\033[0m"
         if [[ "$ODOO_DB" == -* ]]; then
           if [[ "$USE_VENV" == "true" ]]; then
             DB_RESULT=$(sudo -u $SERVER_USER bash -c "source '$MAIN_PATH/venv/bin/activate' && click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
           else
-            DB_RESULT=$(sudo -u $SERVER_USER bash -c "click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
+            DB_RESULT=$(sudo -u $SERVER_USER bash -c "source /home/$SERVER_USER/.bashrc && click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
           fi
         elif [[ -n "$ODOO_DB" ]]; then
             DB_RESULT=$(echo $ODOO_DB | tr ',' ' ')
@@ -37,7 +37,7 @@ runs:
           if [[ "$USE_VENV" == "true" ]]; then
             DB_RESULT=$(sudo -u $SERVER_USER bash -c "source '$MAIN_PATH/venv/bin/activate' && click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
           else
-            DB_RESULT=$(sudo -u $SERVER_USER bash -c "click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
+            DB_RESULT=$(sudo -u $SERVER_USER bash -c "source /home/$SERVER_USER/.bashrc && click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
           fi
         fi
         echo "DB_RESULT=$DB_RESULT" >> $GITHUB_OUTPUT

@@ -27,7 +27,7 @@ runs:
           if [[ "$USE_VENV" == "true" ]]; then
             DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'source \"$MAIN_PATH/venv/bin/activate\" && click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
           else
-            DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
+            DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'source /home/$SERVER_USER/.bashrc && click-odoo-listdb -c \"$ODOO_CONFIG\" | tr \"\n\" \" \"'")
           fi
         elif [[ -n "$ODOO_DB" ]]; then
             DB_RESULT=$(echo $ODOO_DB | tr ',' ' ')
@@ -35,7 +35,7 @@ runs:
           if [[ "$USE_VENV" == "true" ]]; then
             DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'source \"$MAIN_PATH/venv/bin/activate\" && click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
           else
-            DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
+            DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'source /home/$SERVER_USER/.bashrc && click-odoo-listdb -c \"$ODOO_CONFIG\" | tr \"\n\" \" \"'")
           fi
         fi
         echo "DB_RESULT=\"$DB_RESULT\"" >> $GITHUB_OUTPUT
