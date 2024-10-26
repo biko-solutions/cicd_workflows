@@ -2,10 +2,15 @@ name: Get database list
 
 inputs:
   MAIN_PATH:
+    description: 'Main path'
   SERVER_USER:
+    description: 'Server user'
   ODOO_CONFIG:
+    description: 'Odoo config path'
   USE_VENV:
+    description: 'Should use venv to run script'
   ODOO_DB:
+    description: 'User DB list'
 
 outputs:
   DB_RESULT:
