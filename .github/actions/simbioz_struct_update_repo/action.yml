@@ -41,4 +41,4 @@ runs:
         else
           echo "NO CUSTOM FOLDERS SPECIFIED"
         fi
-      shell: bash
+      shell: sh
