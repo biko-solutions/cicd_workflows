@@ -22,6 +22,8 @@ inputs:
   ODOO_DB:
     required: false
     type: string
+  CICD_TOKEN:
+    required: true
 
 # env:
 #   MAIN_PATH: ${{ inputs.MAIN_PATH }}
@@ -60,7 +62,7 @@ runs:
     - uses: actions/checkout@v4.2.2
       with:
         repository: biko-solutions/cicd_workflows
-        token: ${{ secrets.CICD_TOKEN }}
+        token: ${{ inputs.CICD_TOKEN }}
         fetch-depth: 0
 
     # - name: Set venv
