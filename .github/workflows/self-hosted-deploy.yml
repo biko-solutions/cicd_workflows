@@ -62,8 +62,8 @@ jobs:
       - name: Set venv
         run: |
           python3 -m venv ./venv
-          echo "PYTHON_SCRIPT=\"$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py\"" >> $GITHUB_ENV
-          echo "PYTHON_SCRIPT=$PYTHON_SCRIPT"
+          echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_ENV
+          echo "PYTHON_SCRIPT=\"$PYTHON_SCRIPT\""
 
       - name: Check script path
         run: |
