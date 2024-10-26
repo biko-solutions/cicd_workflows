@@ -4,6 +4,9 @@ inputs:
   MAIN_PATH:
     required: true
     type: string
+  SERVER_USER:
+    requred: true
+    type: string
 
 runs:
   using: 'composite'
@@ -23,3 +26,4 @@ runs:
       shell: bash
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}

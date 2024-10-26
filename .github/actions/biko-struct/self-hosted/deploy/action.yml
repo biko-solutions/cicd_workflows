@@ -72,6 +72,7 @@ runs:
       uses: biko-solutions/cicd_workflows/.github/actions/biko-struct/self-hosted/update-repo@main
       with:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
 
     - name: Get database list
       id: get-db-list
