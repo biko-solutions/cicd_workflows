@@ -35,7 +35,7 @@ runs:
 
         echo -e "\033[34m=== Starting database update ===\033[0m"
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
-        echo "sudo -u $SERVER_USER $PYTHON_SCRIPT --databases $DB_RESULT --main_path $MAIN_PATH --config $ODOO_CONFIG --user $SERVER_USER --hard $venv_flag" > ~/update_db_script.sh
+        echo "sudo -u $SERVER_USER $PYTHON_SCRIPT --databases \"$DB_RESULT\" --main_path $MAIN_PATH --config $ODOO_CONFIG --user $SERVER_USER --hard $venv_flag" > ~/update_db_script.sh
         cat ~/update_db_script.sh
         ssh -o TCPKeepAlive=yes -o ServerAliveCountMax=30 -o ServerAliveInterval=60 deploy bash < ~/update_db_script.sh
 
