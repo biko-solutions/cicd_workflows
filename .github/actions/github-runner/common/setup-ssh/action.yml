@@ -1,0 +1,40 @@
+name: Configure SSH and test SSH connection
+
+inputs:
+  SERVER_USER:
+    required: true
+    type: string
+  SERVER_ADDR:
+    required: true
+    type: string
+  SSH_PORT:
+    required: false
+    default: 22
+    type: string
+  SERVER_SSH:
+    requred: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure SSH
+      run: |
+        echo -e "\033[32m============= CONGIGURING SSH CONNECTION =============\033[0m"
+        install -m 600 -D /dev/null ~/.ssh/id_rsa
+        echo "${{SSH_KEY}}" > ~/.ssh/id_rsa
+        ssh-keyscan -H ${{SERVER_ADDR}} > ~/.ssh/known_hosts
+        cat >~/.ssh/config <<EOF
+        Host deploy
+          HostName ${{SERVER_ADDR}}
+          User $SERVER_USER
+          Port ${{SERVER_PORT}}
+          IdentityFile ~/.ssh/id_rsa
+          StrictHostKeyChecking no
+        EOF
+        ssh -T deploy > /dev/null
+      shell: bash
+      env:
+        SSH_KEY: ${{inputs.SERVER_SSH}}
+        SERVER_ADDR: ${{inputs.SERVER_ADDR}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
+        SERVER_PORT: ${{inputs.SSH_PORT}}
