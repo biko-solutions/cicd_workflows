@@ -89,15 +89,15 @@ runs:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
 
-    # - name: Get database list
-    #   id: get-db-list
-    #   uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/get-db-list@main
-    #   with:
-    #     MAIN_PATH: ${{inputs.MAIN_PATH}}
-    #     SERVER_USER: ${{inputs.SERVER_USER}}
-    #     USE_VENV: ${{inputs.USE_VENV}}
-    #     ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
-    #     ODOO_DB: ${{inputs.ODOO_DB}}
+    - name: Get database list
+      id: get-db-list
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/get-db-list@main
+      with:
+        MAIN_PATH: ${{inputs.MAIN_PATH}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
+        USE_VENV: ${{inputs.USE_VENV}}
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        ODOO_DB: ${{inputs.ODOO_DB}}
 
     # - name: Soft update (only changes)
     #   if: ${{ inputs.base_update == 'false' }}

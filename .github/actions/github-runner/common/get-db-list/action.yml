@@ -1,0 +1,48 @@
+name: Get database list
+
+inputs:
+  MAIN_PATH:
+    description: 'Main path'
+  SERVER_USER:
+    description: 'Server user'
+  ODOO_CONFIG:
+    description: 'Odoo config path'
+  USE_VENV:
+    description: 'Should use venv to run script'
+  ODOO_DB:
+    description: 'User DB list'
+
+outputs:
+  DB_RESULT:
+    value: ${{ steps.get-db-list.outputs.DB_RESULT }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Get database list
+      run: |
+        echo -e "\033[32m=== GETING DATABASE LIST ===\033[0m"
+        if [[ "$ODOO_DB" == -* ]]; then
+          if [[ "$USE_VENV" == "true" ]]; then
+            DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'source \"$MAIN_PATH/venv/bin/activate\" && click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
+          else
+            DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
+          fi
+        elif [[ -n "$ODOO_DB" ]]; then
+            DB_RESULT=$(echo $ODOO_DB | tr ',' ' ')
+        else
+          if [[ "$USE_VENV" == "true" ]]; then
+            DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'source \"$MAIN_PATH/venv/bin/activate\" && click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
+          else
+            DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
+          fi
+        fi
+        echo "DB_RESULT=$DB_RESULT" >> $GITHUB_OUTPUT
+        echo -e "\033[32m DATABASES ==> $DB_RESULT \033[0m"
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        ODOO_CONFIG: ${{ inputs.ODOO_CONFIG }}
+        USE_VENV: ${{ inputs.USE_VENV }}
+        ODOO_DB: ${{ inputs.ODOO_DB }}
+      shell: bash
