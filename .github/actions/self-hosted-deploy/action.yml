@@ -36,21 +36,22 @@ runs:
   steps:
     - name: Check settings
       run: |
-        if [[ ! -d "$MAIN_PATH" ]]; then
-          echo "Folder $MAIN_PATH does not exist."
-          exit 100
-        fi
-        if [[ -z "$SERVER_USER" ]]; then
-          echo "SERVER_USER variable is not set."
-          exit 100
-        fi
-        if [[ -z "$ODOO_SERVICE" ]]; then
-          echo "ODOO_SERVICE variable is not set."
-          exit 100
-        fi
-      env:
-        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        echo $INPUT_MAIN_PATH
+        # if [[ ! -d "$MAIN_PATH" ]]; then
+        #   echo "Folder $MAIN_PATH does not exist."
+        #   exit 100
+        # fi
+        # if [[ -z "$SERVER_USER" ]]; then
+        #   echo "SERVER_USER variable is not set."
+        #   exit 100
+        # fi
+        # if [[ -z "$ODOO_SERVICE" ]]; then
+        #   echo "ODOO_SERVICE variable is not set."
+        #   exit 100
+        # fi
       shell: bash
+      env:
+        INPUT_MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     # - uses: actions/checkout@v4.2.2
     #   with:
