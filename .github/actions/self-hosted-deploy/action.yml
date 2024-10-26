@@ -48,6 +48,8 @@ runs:
           echo "ODOO_SERVICE variable is not set."
           exit 100
         fi
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
       shell: bash
 
     # - uses: actions/checkout@v4.2.2
