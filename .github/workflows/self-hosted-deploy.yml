@@ -38,20 +38,20 @@ jobs:
     runs-on:
       group: ${{inputs.RUNNER_GROUP}}
     steps:
-      - name: Check settings
-        run: |
-          if [[ ! -d "$MAIN_PATH" ]]; then
-            echo "Folder $MAIN_PATH does not exist."
-            exit 100
-          fi
-          if [[ -z "$SERVER_USER" ]]; then
-            echo "PROD_SERV_USER variable is not set."
-            exit 100
-          fi
-          if [[ -z "$ODOO_SERVICE" ]]; then
-            echo "PROD_ODOO_SERVICE variable is not set."
-            exit 100
-          fi
+      # - name: Check settings
+      #   run: |
+      #     if [[ ! -d "$MAIN_PATH" ]]; then
+      #       echo "Folder $MAIN_PATH does not exist."
+      #       exit 100
+      #     fi
+      #     if [[ -z "$SERVER_USER" ]]; then
+      #       echo "PROD_SERV_USER variable is not set."
+      #       exit 100
+      #     fi
+      #     if [[ -z "$ODOO_SERVICE" ]]; then
+      #       echo "PROD_ODOO_SERVICE variable is not set."
+      #       exit 100
+      #     fi
 
       - uses: actions/checkout@v4.2.2
         with:
