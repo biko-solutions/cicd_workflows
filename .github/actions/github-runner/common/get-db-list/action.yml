@@ -38,7 +38,7 @@ runs:
             DB_RESULT=$(ssh deploy "sudo -u $SERVER_USER bash -c 'click-odoo-listdb -c \"$ODOO_CONFIG\"' | tr '\n' ' '")
           fi
         fi
-        echo "DB_RESULT=$DB_RESULT" >> $GITHUB_OUTPUT
+        echo "DB_RESULT=\"$DB_RESULT\"" >> $GITHUB_OUTPUT
         echo -e "\033[32m DATABASES ==> $DB_RESULT \033[0m"
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
