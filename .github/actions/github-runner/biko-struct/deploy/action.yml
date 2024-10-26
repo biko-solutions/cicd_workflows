@@ -69,15 +69,19 @@ runs:
         SSH_PORT: ${{inputs.SSH_PORT}}
 
     - name: Install UPDATE_ODOO.PY script
+      id: create-python-script
       uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/setup-remote-script@main
       with:
         CICD_TOKEN: ${{inputs.CICD_TOKEN}}
 
     - name: Debug
-      run: echo $SCRIPTDIR
+      run: |
+        echo $SCRIPTDIR
+        echo $PYTHON_SCRIPT
       shell: bash
       env:
         SCRIPTDIR: ${{env.SCRIPTDIR}}
+        PYTHON_SCRIPT: ${{${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}}}
 
     # - name: Update repository
     #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/biko-struct/update-repo@main
