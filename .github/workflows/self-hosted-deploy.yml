@@ -45,11 +45,11 @@ jobs:
             exit 100
           fi
           if [[ -z "$SERVER_USER" ]]; then
-            echo "PROD_SERV_USER variable is not set."
+            echo "SERVER_USER variable is not set."
             exit 100
           fi
           if [[ -z "$ODOO_SERVICE" ]]; then
-            echo "PROD_ODOO_SERVICE variable is not set."
+            echo "ODOO_SERVICE variable is not set."
             exit 100
           fi
 
