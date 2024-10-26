@@ -19,7 +19,7 @@ runs:
   steps:
     - name: Configure SSH
       run: |
-        echo -e "\033[32m============= CONGIGURING SSH CONNECTION =============\033[0m"
+        echo -e "::group::\033[32m============= CONGIGURING SSH CONNECTION =============\033[0m"
         install -m 600 -D /dev/null ~/.ssh/id_rsa
         echo "$SSH_KEY" > ~/.ssh/id_rsa
         ssh-keyscan -H $SERVER_ADDR > ~/.ssh/known_hosts
@@ -32,6 +32,7 @@ runs:
           StrictHostKeyChecking no
         EOF
         ssh -T deploy > /dev/null
+        echo "::endgroup::"
       shell: bash
       env:
         SSH_KEY: ${{inputs.SERVER_SSH}}
