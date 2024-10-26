@@ -65,6 +65,10 @@ runs:
         token: ${{ inputs.CICD_TOKEN }}
         fetch-depth: 0
 
+    - name: List files
+      run: ls -la
+      shell: bash
+
     # - name: Set venv
     #   run: |
     #     python3 -m venv ./venv
