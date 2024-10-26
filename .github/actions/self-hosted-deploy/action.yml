@@ -30,8 +30,6 @@ runs:
   steps:
     - name: Check settings
       run: |
-        echo ${{ inputs.USE_VENV }}
-        exit 100
         if [[ ! -d "$MAIN_PATH" ]]; then
           echo "Folder $MAIN_PATH does not exist."
           exit 100
