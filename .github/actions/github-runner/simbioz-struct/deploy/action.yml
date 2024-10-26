@@ -95,7 +95,7 @@ runs:
         MAIN_PATH: ${{inputs.MAIN_PATH}}
         SERVER_USER: ${{inputs.SERVER_USER}}
         USE_VENV: ${{inputs.USE_VENV}}
-        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
         ODOO_DB: ${{inputs.ODOO_DB}}
 
     - name: Debug
@@ -118,7 +118,7 @@ runs:
         SERVER_USER: ${{ inputs.SERVER_USER }}
         PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
         DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
-        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     - name: Hard update (base module)
@@ -130,7 +130,7 @@ runs:
         SERVER_USER: ${{ inputs.SERVER_USER }}
         PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
         DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
-        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     - name: Clear scripts and data
