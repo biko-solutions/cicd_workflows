@@ -122,7 +122,6 @@ runs:
         cd $MAIN_PATH
         sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard > /dev/null 2>&1
         if [[ -n \$(sudo -u $SERVER_USER git status -s) ]]; then
-          echo "========== DEBUG =============="
           sudo -u $SERVER_USER git config --global user.name github-actions[bot]
           sudo -u $SERVER_USER git config --global user.email github-actions[bot]@users.noreply.github.com
           sudo -u $SERVER_USER git add -A
