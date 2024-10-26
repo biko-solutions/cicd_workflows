@@ -45,16 +45,16 @@ runs:
         #!/bin/bash
         if [[ -n "$CUSTOM_PATH" ]]; then
           IFS=',' read -ra PATHS <<<"$CUSTOM_PATH"
-          for PTH in "${PATHS[@]}"; do
-            if [[ -d "$PTH" ]]; then
-              cd "$PTH"
+          for PTH in "\${PATHS[@]}"; do
+            if [[ -d "\$PTH" ]]; then
+              cd "\$PTH"
               echo "Current directory: " && pwd
-              if [[ $? -eq 0 ]]; then
+              if [[ \$? -eq 0 ]]; then
                 sudo -u $SERVER_USER git reset --hard
                 sudo -u $SERVER_USER git pull
               fi
             else
-              echo -e "\033[34mNo folder $PTH\033[0m"
+              echo -e "\033[34mNo folder \$PTH\033[0m"
             fi
           done
         else
