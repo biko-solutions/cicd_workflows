@@ -41,7 +41,7 @@ runs:
           echo -e "\033[31mSERVER_ADDR is not set\033[0m"
           exit 100
         fi
-        if [[ ! -z "$MAIN_PATH" ]]; then
+        if [[ -z "$MAIN_PATH" ]]; then
           echo -e "\033[31mFolder $MAIN_PATH does not specified.\033[0m"
           exit 100
         fi
