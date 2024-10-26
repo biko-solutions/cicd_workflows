@@ -45,6 +45,7 @@ runs:
         echo "MAIN_PATH=$MAIN_PATH" >> $GITHUB_ENV
         echo "SERVER_USER=$SERVER_USER" >> $GITHUB_ENV
         echo "ODOO_SERVICE=$ODOO_SERVICE" >> $GITHUB_ENV
+        echo "ODOO_CONFIG=$MAIN_PATH/config_local/odoo-server.conf" >> $GITHUB_ENV
       shell: bash
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
