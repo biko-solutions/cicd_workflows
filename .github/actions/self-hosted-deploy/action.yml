@@ -25,14 +25,6 @@ inputs:
   CICD_TOKEN:
     required: true
 
-# env:
-#   MAIN_PATH: ${{ inputs.MAIN_PATH }}
-#   ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
-#   ODOO_DB: ${{inputs.ODOO_DB}}
-#   ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
-#   SERVER_USER: ${{inputs.SERVER_USER}}
-#   USE_VENV: ${{inputs.USE_VENV}}
-
 runs:
   using: 'composite'
   steps:
@@ -65,24 +57,19 @@ runs:
         token: ${{ inputs.CICD_TOKEN }}
         fetch-depth: 0
 
-    - name: List files
-      run: ls -la
+    - name: Set venv
+      run: |
+        python3 -m venv ./venv
+        source ./venv/bin/activate
+        pip install psutil
+        deactivate
+        echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_ENV
       shell: bash
 
-    # - name: Set venv
-    #   run: |
-    #     python3 -m venv ./venv
-    #     source ./venv/bin/activate
-    #     pip install psutil
-    #     deactivate
-    #     echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_ENV
-    #     echo "PYTHON_SCRIPT=\"$PYTHON_SCRIPT\""
-    #   shell: bash
-
-    # - name: Update repository
-    #   uses: biko-solutions/cicd_workflows/.github/actions/biko_struct_update_repo@main
-    #   with:
-    #     MAIN_PATH: ${{env.MAIN_PATH}}
+    - name: Update repository
+      uses: biko-solutions/cicd_workflows/.github/actions/biko_struct_update_repo@main
+      with:
+        MAIN_PATH: ${{ env.MAIN_PATH }}
 
     # - name: Get database list
     #   run: |
