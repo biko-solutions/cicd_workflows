@@ -63,8 +63,7 @@ runs:
     - name: Set venv
       id: create-python-script
       run: |
-        echo -e "\033[32m ============= CREATING PYTHON VENV =============\033[0m"
-        echo -e "::group::\033[32mSetting VENV Log\033[320"
+        echo -e "::group::\033[32m ============= CREATING PYTHON VENV =============\033[0m"
         python3 -m venv ./venv
         source ./venv/bin/activate
         pip install psutil
@@ -88,14 +87,6 @@ runs:
         USE_VENV: ${{inputs.USE_VENV}}
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
         ODOO_DB: ${{inputs.ODOO_DB}}
-
-    - name: Show DB list
-      run: |
-        echo -e "\033[32mDATABASES\033[320"
-        echo $DB_LIST
-      env:
-        DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
-      shell: bash
 
     - name: Soft update (only changes)
       if: ${{ inputs.base_update == 'false' }}
