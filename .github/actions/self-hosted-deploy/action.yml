@@ -33,33 +33,35 @@ inputs:
 
 runs:
   using: 'composite'
-  env:
-    MAIN_PATH: ${{ inputs.MAIN_PATH }}
   steps:
     - name: Check settings
       run: |
-        echo $MAIN_PATH
-        # if [[ ! -d "$MAIN_PATH" ]]; then
-        #   echo "Folder $MAIN_PATH does not exist."
-        #   exit 100
-        # fi
-        # if [[ -z "$SERVER_USER" ]]; then
-        #   echo "SERVER_USER variable is not set."
-        #   exit 100
-        # fi
-        # if [[ -z "$ODOO_SERVICE" ]]; then
-        #   echo "ODOO_SERVICE variable is not set."
-        #   exit 100
-        # fi
+        if [[ ! -d "$MAIN_PATH" ]]; then
+          echo "Folder $MAIN_PATH does not exist."
+          exit 100
+        fi
+        if [[ -z "$SERVER_USER" ]]; then
+          echo "SERVER_USER variable is not set."
+          exit 100
+        fi
+        if [[ -z "$ODOO_SERVICE" ]]; then
+          echo "ODOO_SERVICE variable is not set."
+          exit 100
+        fi
+        echo "MAIN_PATH=$MAIN_PATH" >> $GITHUB_ENV
+        echo "SERVER_USER=$SERVER_USER" >> $GITHUB_ENV
+        echo "ODOO_SERVICE=$ODOO_SERVICE" >> $GITHUB_ENV
       shell: bash
-      # env:
-      #   MAIN_PATH: ${{ inputs.MAIN_PATH }}
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
 
-    # - uses: actions/checkout@v4.2.2
-    #   with:
-    #     repository: biko-solutions/cicd_workflows
-    #     token: ${{ secrets.CICD_TOKEN }}
-    #     fetch-depth: 0
+    - uses: actions/checkout@v4.2.2
+      with:
+        repository: biko-solutions/cicd_workflows
+        token: ${{ secrets.CICD_TOKEN }}
+        fetch-depth: 0
 
     # - name: Set venv
     #   run: |
