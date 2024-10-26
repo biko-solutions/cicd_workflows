@@ -39,7 +39,7 @@ on:
 env:
   MAIN_PATH: ${{inputs.MAIN_PATH}}
   CUSTOM_PATH: ${{inputs.CUSTOM_PATH}}
-  ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+  ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
   ODOO_DB: ${{inputs.ODOO_DB}}
   ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
   SERVER_USER: ${{inputs.SERVER_USER}}

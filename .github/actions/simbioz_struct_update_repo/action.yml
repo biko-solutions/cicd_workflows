@@ -15,7 +15,7 @@ runs:
   using: 'composite'
   steps:
     - name: Update from SIMBIOZ repo - prepare
-      if: ${{inputs.update_simbioz}}
+      if: inputs.update_simbioz
       run: |
         cd ${{inputs.MAIN_PATH}}
         sudo -u $SERVER_USER git submodule foreach --recursive git config --local --replace-all safe.directory '*'
