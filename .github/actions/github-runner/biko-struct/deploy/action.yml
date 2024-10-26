@@ -37,7 +37,7 @@ runs:
     - name: Check settings
       run: |
         echo -e "\033[32m============= CHECKING PARAMETERS =============\033[0m"
-        if [[ -z "${{SERVER_ADDR}}" ]]; then
+        if [[ -z "$SERVER_ADDR" ]]; then
           echo "SERVER_ADDR is not set"
           exit 100
         fi
@@ -56,9 +56,9 @@ runs:
       shell: bash
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
-        ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
-        SERVER_USER: ${{inputs.SERVER_USER}}
-        SERVER_ADDR: ${{inputs.SERVER_ADDR}}
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        SERVER_ADDR: ${{ inputs.SERVER_ADDR }}
 
     - name: Configure SSH
       uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/setup-ssh@main
