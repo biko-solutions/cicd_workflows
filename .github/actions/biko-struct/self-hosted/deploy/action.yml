@@ -49,6 +49,10 @@ runs:
         ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
         SERVER_USER: ${{inputs.SERVER_USER}}
 
+    - name: Log checkout
+      run: echo -e "\033[32m ============= CHECKOUT CICD REPO =============\033[0m"
+      shell: bash
+
     - uses: actions/checkout@v4.2.2
       with:
         repository: biko-solutions/cicd_workflows
@@ -59,8 +63,8 @@ runs:
     - name: Set venv
       id: create-python-script
       run: |
-        echo ============= SETTING VENV =============
-        echo "::group::Setting VENV Log"
+        run: echo -e "\033[32m ============= CHECKOUT CICD REPO =============\033[0m"
+        echo -e "::group::\033[32mSetting VENV Log\033[0m"
         python3 -m venv ./venv
         source ./venv/bin/activate
         pip install psutil
