@@ -59,15 +59,15 @@ jobs:
           token: ${{ secrets.CICD_TOKEN }}
           fetch-depth: 0
 
-      - name: Set script path
+      - name: Set venv
         run: |
-          echo "=== SETTING SCRIPT PATH ==="
-          echo "PYTHON_SCRIPT=$(pwd)/scripts/update_odoo.py" >> $GITHUB_ENV
+          python3 -m venv ./venv
+          echo "PYTHON_SCRIPT=\"$(pwd)/venv/bin/pyton3 $(pwd)/scripts/update_odoo.py\"" >> $GITHUB_ENV
           echo "PYTHON_SCRIPT=$PYTHON_SCRIPT"
 
       - name: Check script path
         run: |
-          python3 $PYTHON_SCRIPT
+          $PYTHON_SCRIPT
         env:
           PYTHON_SCRIPT: ${{ env.PYTHON_SCRIPT }}
 
@@ -147,5 +147,5 @@ jobs:
       #       sudo -u $SERVER_USER "No submodule updates."
       #     fi
 
-      - uses: colpal/actions-clean@v1
-        if: ${{ always() }}
+      # - uses: colpal/actions-clean@v1
+      #   if: ${{ always() }}
