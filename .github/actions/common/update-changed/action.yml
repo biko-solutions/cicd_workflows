@@ -1,0 +1,43 @@
+name: Soft update (only changes)
+
+inputs:
+  ODOO_SERVICE:
+    type: string
+    required: true
+  USE_VENV:
+    type: string
+    requred: true
+  SERVER_USER:
+    type: string
+    requred: true
+  PYTHON_SCRIPT:
+    type: string
+    required: true
+  DB_LIST:
+    type: string
+    required: true
+  MAIN_PATH:
+    type: string
+    required: true
+  ODOO_CONFIG:
+    type: string
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Soft update (only changes)
+      run: |
+        sudo systemctl restart $ODOO_SERVICE && sleep 10
+        echo "=== Starting parallel database update ==="
+        venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
+        sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag
+      env:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        USE_VENV: ${{ inputs.USE_VENV }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        PYTHON_SCRIPT: ${{ inputs.PYTHON_SCRIPT }}
+        DB_LIST: ${{ inputs.DB_LIST }}
+        ODOO_CONFIG: ${{ inputs.ODOO_CONFIG }}
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+      shell: bash
