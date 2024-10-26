@@ -38,8 +38,8 @@ runs:
             DB_RESULT=$(sudo -u $SERVER_USER bash -c "click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
           fi
         fi
-        echo "=== DATABASES ==="
         echo "DB_RESULT=$DB_RESULT" >> $GITHUB_OUTPUT
+        echo -e "\033[32m DATABASES ==> $DB_RESULT \033[320"
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}

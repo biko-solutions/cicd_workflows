@@ -64,7 +64,7 @@ runs:
       id: create-python-script
       run: |
         echo -e "\033[32m ============= CREATING PYTHON VENV =============\033[0m"
-        echo -e "\033[32m ::group::Setting VENV Log\033[320"
+        echo -e "::group::\033[32mSetting VENV Log\033[320"
         python3 -m venv ./venv
         source ./venv/bin/activate
         pip install psutil
