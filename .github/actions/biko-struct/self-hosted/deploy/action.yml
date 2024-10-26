@@ -30,6 +30,7 @@ runs:
   steps:
     - name: Check settings
       run: |
+        echo ============= CHECKING PARAMETERS =============
         if [[ ! -d "$MAIN_PATH" ]]; then
           echo "Folder $MAIN_PATH does not exist."
           exit 100
@@ -42,10 +43,6 @@ runs:
           echo "ODOO_SERVICE variable is not set."
           exit 100
         fi
-        # echo "MAIN_PATH=$MAIN_PATH" >> $GITHUB_ENV
-        # echo "SERVER_USER=$SERVER_USER" >> $GITHUB_ENV
-        # echo "ODOO_SERVICE=$ODOO_SERVICE" >> $GITHUB_ENV
-        # echo "ODOO_CONFIG=$MAIN_PATH/config_local/odoo-server.conf" >> $GITHUB_ENV
       shell: bash
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
@@ -57,15 +54,19 @@ runs:
         repository: biko-solutions/cicd_workflows
         token: ${{ inputs.CICD_TOKEN }}
         fetch-depth: 0
+        show-progress: false
 
     - name: Set venv
       id: create-python-script
       run: |
+        echo ============= SETTING VENV =============
+        echo "::group::Setting VENV Log"
         python3 -m venv ./venv
         source ./venv/bin/activate
         pip install psutil
         deactivate
         echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_OUTPUT
+        echo "::endgroup::"
       shell: bash
 
     - name: Update repository
