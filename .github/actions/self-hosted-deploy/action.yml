@@ -65,7 +65,6 @@ runs:
         pip install psutil
         deactivate
         echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_ENV
-        echo "PYTHON_SCRIPT=$PYTHON_SCRIPT"
       shell: bash
 
     - name: Update repository
