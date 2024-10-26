@@ -1,0 +1,121 @@
+name: Deploy ACTION
+
+inputs:
+  base_update:
+    required: false
+    type: boolean
+  update_simbioz:
+    required: true
+    type: boolean
+  MAIN_PATH:
+    required: true
+    type: string
+  CUSTOM_PATH:
+    required: true
+    type: string
+  ODOO_SERVICE:
+    required: true
+    type: string
+  SERVER_USER:
+    required: true
+    type: string
+  USE_VENV:
+    required: true
+    type: string
+  ODOO_DB:
+    required: false
+    type: string
+  CICD_TOKEN:
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check settings
+      run: |
+        echo -e "\033[32m============= CHECKING PARAMETERS =============\033[0m"
+        if [[ ! -d "$MAIN_PATH" ]]; then
+          echo "Folder $MAIN_PATH does not exist."
+          exit 100
+        fi
+        if [[ -z "$SERVER_USER" ]]; then
+          echo "SERVER_USER variable is not set."
+          exit 100
+        fi
+        if [[ -z "$ODOO_SERVICE" ]]; then
+          echo "ODOO_SERVICE variable is not set."
+          exit 100
+        fi
+      shell: bash
+      env:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
+
+    - name: Log checkout
+      run: echo -e "\033[32m============= PULLING THE CICD REPO =============\033[0m"
+      shell: bash
+
+    - uses: actions/checkout@v4.2.2
+      with:
+        repository: biko-solutions/cicd_workflows
+        token: ${{ inputs.CICD_TOKEN }}
+        fetch-depth: 0
+        show-progress: false
+
+    - name: Set venv
+      id: create-python-script
+      run: |
+        echo -e "::group::\033[32m ============= CREATING PYTHON VENV =============\033[0m"
+        python3 -m venv ./venv
+        source ./venv/bin/activate
+        pip install psutil
+        deactivate
+        echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_OUTPUT
+        echo "::endgroup::"
+      shell: bash
+
+    - name: Update repository
+      uses: biko-solutions/cicd_workflows/.github/actions/simbioz-struct/self-hosted/update-repo@main
+      with:
+        update_simbioz: ${{ inputs.update_simbioz }}
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        CUSTOM_PATH: ${{ inputs.CUSTOM_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+
+    - name: Get database list
+      id: get-db-list
+      uses: biko-solutions/cicd_workflows/.github/actions/common/get-db-list@main
+      with:
+        MAIN_PATH: ${{inputs.MAIN_PATH}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
+        USE_VENV: ${{inputs.USE_VENV}}
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
+        ODOO_DB: ${{inputs.ODOO_DB}}
+
+    - name: Soft update (only changes)
+      if: ${{ inputs.base_update == 'false' }}
+      uses: biko-solutions/cicd_workflows/.github/actions/common/update-changed@main
+      with:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        USE_VENV: ${{ inputs.USE_VENV }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+        DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+
+    - name: Hard update (base module)
+      if: ${{ inputs.base_update == 'true' }}
+      uses: biko-solutions/cicd_workflows/.github/actions/common/update-base@main
+      with:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        USE_VENV: ${{ inputs.USE_VENV }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+        DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+
+    - uses: colpal/actions-clean@v1
+      if: ${{ always() }}

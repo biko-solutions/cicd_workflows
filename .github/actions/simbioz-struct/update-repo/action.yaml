@@ -1,0 +1,60 @@
+name: Update repository (SIMBIOZ Template)
+
+inputs:
+  update_simbioz:
+    required: true
+    type: boolean
+  MAIN_PATH:
+    required: true
+    type: string
+  CUSTOM_PATH:
+    required: true
+    type: string
+  SERVER_USER:
+    requred: true
+    type: string
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Update from SIMBIOZ repo
+      if: ${{ inputs.update_simbioz == 'true' }}
+      run: |
+        echo -e "::group::\033[32m============= UPDATING SIMBIOZ REPOSITORIES =============\033[320"
+        cd $MAIN_PATH
+        sudo -u $SERVER_USER git submodule foreach --recursive git config --local --replace-all safe.directory '*'
+        sudo -u $SERVER_USER git submodule foreach --recursive git config --local --add safe.directory '*'
+        sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard
+        sudo -u $SERVER_USER git submodule foreach --recursive git pull
+        sudo -u $SERVER_USER sh odoo_set_icons.sh || true
+        echo "::endgroup::"
+      shell: bash
+      env:
+        MAIN_PATH: ${{inputs.MAIN_PATH}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
+
+    - name: Update from BIKO repo
+      run: |
+        echo -e "::group::\033[32m============= UPDATING CUSTOM REPOSITORIES =============\033[320"
+        if [[ -n "$CUSTOM_PATH" ]]; then
+          IFS=',' read -ra PATHS <<<"$CUSTOM_PATH"
+          for PTH in "${PATHS[@]}"; do
+            if [[ -d "$PTH" ]]; then
+              cd "$PTH"
+              echo "Current directory: " && pwd
+              if [[ $? -eq 0 ]]; then
+                sudo -u $SERVER_USER git reset --hard
+                sudo -u $SERVER_USER git pull
+              fi
+            else
+              echo -e "::group::\033[34m"No folder $PTH\033[340"
+            fi
+          done
+        else
+          echo -e "::group::\033[34m"NO CUSTOM FOLDERS SPECIFIED\033[340"
+        fi
+        echo "::endgroup::"
+      shell: bash
+      env:
+        CUSTOM_PATH: ${{inputs.CUSTOM_PATH}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
