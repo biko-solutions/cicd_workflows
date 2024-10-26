@@ -15,7 +15,7 @@ runs:
   using: 'composite'
   steps:
     - name: Update from SIMBIOZ repo
-      if: inputs.update_simbioz
+      if: ${{ inputs.update_simbioz == 'true' }}
       run: |
         echo ===== Update from SIMBIOZ repo ====
         cd ${{inputs.MAIN_PATH}}
