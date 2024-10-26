@@ -32,3 +32,4 @@ runs:
         ssh deploy bash -c "cd \"$DIR\" && python3 -m venv venv"
         ssh deploy bash -c "ls -la \"$DIR\""
         echo "PYTHON_SCRIPT=\"$DIR/venv/bin/python3 $DIR/scripts/update_odoo.py\"" >> $GITHUB_OUTPUT
+      shell: bash
