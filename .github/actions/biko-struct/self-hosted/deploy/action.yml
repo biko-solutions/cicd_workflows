@@ -30,7 +30,7 @@ runs:
   steps:
     - name: Check settings
       run: |
-        echo ============= CHECKING PARAMETERS =============
+        echo -e "\033[32m ============= CHECKING PARAMETERS =============\033[0m"
         if [[ ! -d "$MAIN_PATH" ]]; then
           echo "Folder $MAIN_PATH does not exist."
           exit 100
