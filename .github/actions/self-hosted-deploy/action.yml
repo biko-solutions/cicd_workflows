@@ -60,9 +60,9 @@ runs:
 
     - name: Set venv
       run: |
-        python3 -m venv ./venv
+        python3 -m venv ./venv 2>/dev/null
         source ./venv/bin/activate
-        pip install psutil
+        pip install psutil 2>/dev/null
         deactivate
         echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_ENV
       shell: bash
