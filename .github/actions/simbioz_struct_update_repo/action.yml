@@ -22,10 +22,9 @@ runs:
     - name: Update from BIKO repo
       run: |
         echo ===== Update from BIKO repo ====
-        echo $CUSTOM_PATH
         if [[ -n "$CUSTOM_PATH" ]]; then
-          for PTH in {$CUSTOM_PATH}
-          do
+          IFS=',' read -ra PATHS <<<"$CUSTOM_PATH"
+          for PTH in "${PATHS[@]}"; do
             if [[ -d "$PTH" ]]; then
               cd "$PTH"
               echo "Current directory: " && pwd
@@ -41,4 +40,4 @@ runs:
         else
           echo "NO CUSTOM FOLDERS SPECIFIED"
         fi
-      shell: sh
+      shell: bash
