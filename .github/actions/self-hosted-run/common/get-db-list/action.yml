@@ -22,7 +22,7 @@ runs:
     - name: Get database list
       id: get-db-list
       run: |
-        echo -e "\033[32m=== GETING DATABASE LIST ===\033[0m"
+        echo -e "\033[32m=== OBTAINING DATABASE LIST ===\033[0m"
         if [[ "$ODOO_DB" == -* ]]; then
           if [[ "$USE_VENV" == "true" ]]; then
             DB_RESULT=$(sudo -u $SERVER_USER bash -c "source '$MAIN_PATH/venv/bin/activate' && click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
