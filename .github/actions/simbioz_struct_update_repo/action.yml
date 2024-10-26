@@ -12,7 +12,7 @@ runs:
       if: ${{ inputs.update_simbioz == 'true' }}
       run: |
         echo ===== Update from SIMBIOZ repo ====
-        cd ${{MAIN_PATH}}
+        cd $MAIN_PATH
         sudo -u $SERVER_USER git submodule foreach --recursive git config --local --replace-all safe.directory '*'
         sudo -u $SERVER_USER git submodule foreach --recursive git config --local --add safe.directory '*'
         sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard
@@ -24,9 +24,9 @@ runs:
         PTH_STRING: ${{'$PTH'}}
       run: |
         echo ===== Update from BIKO repo ====
-        echo ${{CUSTOM_PATH}}
-        if [[ -n "${{CUSTOM_PATH}}" ]]; then
-          for PTH in {${{CUSTOM_PATH}}}
+        echo $CUSTOM_PATH
+        if [[ -n "$CUSTOM_PATH" ]]; then
+          for PTH in {$CUSTOM_PATH}
           do
             if [[ -d "$PTH_STRING" ]]; then
               cd "$PTH_STRING"
