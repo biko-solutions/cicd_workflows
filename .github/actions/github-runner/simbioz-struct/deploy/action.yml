@@ -84,6 +84,8 @@ runs:
       uses: biko-solutions/cicd_workflows/.github/actions/github-runner/simbioz-struct/update-repo@main
       with:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        update_simbioz: ${{ inputs.update_simbioz }}
+        CUSTOM_PATH: ${{ inputs.CUSTOM_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
 
     # - name: Get database list

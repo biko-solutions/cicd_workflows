@@ -17,10 +17,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Debug
-      run: echo ${{inputs.update_simbioz}}
-      shell: bash
-
     - name: Update from SIMBIOZ repo
       if: ${{ inputs.update_simbioz == 'true' }}
       run: |
@@ -47,18 +43,18 @@ runs:
         echo -e "::group::\033[32m============= UPDATING CUSTOM REPOSITORIES =============\033[0m"
         cat >~/update_script.sh <<EOF
         #!/bin/bash
-        if [[ -n "\$CUSTOM_PATH" ]]; then
-          IFS=',' read -ra PATHS <<<"\$CUSTOM_PATH"
-          for PTH in "\${PATHS[@]}"; do
-            if [[ -d "\$PTH" ]]; then
-              cd "\$PTH"
+        if [[ -n "$CUSTOM_PATH" ]]; then
+          IFS=',' read -ra PATHS <<<"$CUSTOM_PATH"
+          for PTH in "${PATHS[@]}"; do
+            if [[ -d "$PTH" ]]; then
+              cd "$PTH"
               echo "Current directory: " && pwd
-              if [[ \$? -eq 0 ]]; then
+              if [[ $? -eq 0 ]]; then
                 sudo -u $SERVER_USER git reset --hard
                 sudo -u $SERVER_USER git pull
               fi
             else
-              echo -e "\033[34mNo folder \$PTH\033[0m"
+              echo -e "\033[34mNo folder $PTH\033[0m"
             fi
           done
         else
