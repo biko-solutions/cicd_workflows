@@ -88,50 +88,50 @@ runs:
         CUSTOM_PATH: ${{ inputs.CUSTOM_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
 
-    # - name: Get database list
-    #   id: get-db-list
-    #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/get-db-list@main
-    #   with:
-    #     MAIN_PATH: ${{inputs.MAIN_PATH}}
-    #     SERVER_USER: ${{inputs.SERVER_USER}}
-    #     USE_VENV: ${{inputs.USE_VENV}}
-    #     ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
-    #     ODOO_DB: ${{inputs.ODOO_DB}}
+    - name: Get database list
+      id: get-db-list
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/get-db-list@main
+      with:
+        MAIN_PATH: ${{inputs.MAIN_PATH}}
+        SERVER_USER: ${{inputs.SERVER_USER}}
+        USE_VENV: ${{inputs.USE_VENV}}
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        ODOO_DB: ${{inputs.ODOO_DB}}
 
-    # - name: Debug
-    #   run: |
-    #     echo 'SCRIPTDIR ==>' $SCRIPTDIR
-    #     echo 'PYTHON_SCRIPT ==>' $PYTHON_SCRIPT
-    #     echo 'DB_RESULT ==>' $DB_RESULT
-    #   shell: bash
-    #   env:
-    #     SCRIPTDIR: ${{env.SCRIPTDIR}}
-    #     PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
-    #     DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
+    - name: Debug
+      run: |
+        echo 'SCRIPTDIR ==>' $SCRIPTDIR
+        echo 'PYTHON_SCRIPT ==>' $PYTHON_SCRIPT
+        echo 'DB_RESULT ==>' $DB_RESULT
+      shell: bash
+      env:
+        SCRIPTDIR: ${{env.SCRIPTDIR}}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+        DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
 
-    # - name: Soft update (only changes)
-    #   if: ${{ inputs.base_update == 'false' }}
-    #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/update-changed@main
-    #   with:
-    #     ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
-    #     USE_VENV: ${{ inputs.USE_VENV }}
-    #     SERVER_USER: ${{ inputs.SERVER_USER }}
-    #     PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
-    #     DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
-    #     ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
-    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
+    - name: Soft update (only changes)
+      if: ${{ inputs.base_update == 'false' }}
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/update-changed@main
+      with:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        USE_VENV: ${{ inputs.USE_VENV }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+        DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
-    # - name: Hard update (base module)
-    #   if: ${{ inputs.base_update == 'true' }}
-    #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/update-base@main
-    #   with:
-    #     ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
-    #     USE_VENV: ${{ inputs.USE_VENV }}
-    #     SERVER_USER: ${{ inputs.SERVER_USER }}
-    #     PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
-    #     DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
-    #     ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
-    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
+    - name: Hard update (base module)
+      if: ${{ inputs.base_update == 'true' }}
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/update-base@main
+      with:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        USE_VENV: ${{ inputs.USE_VENV }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+        DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     - name: Clear scripts and data
       run: |
