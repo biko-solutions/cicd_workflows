@@ -22,6 +22,11 @@ inputs:
   ODOO_CONFIG:
     type: string
     required: true
+  exclusive_update:
+    description: 'Turn off database during update'
+    required: false
+    default: false
+    type: boolean
 
 runs:
   using: 'composite'
@@ -29,10 +34,20 @@ runs:
     - name: Soft update (only changes)
       run: |
         echo -e "::group::\033[32m=== Starting parallel database update ===\033[0m"
-        sudo systemctl restart $ODOO_SERVICE && sleep 10
+        sudo systemctl stop $ODOO_SERVICE
+
+        if [ $exclusive_update == "false" ]; then
+          sudo systemctl start $ODOO_SERVICE
+        fi
+
+        sleep 10
+
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag
         update_status=$?
+
+        sudo systemctl restart $ODOO_SERVICE
+
         echo "::endgroup::"
         if [ $update_status -ne 0 ]; then
           echo -e "\033[31mError: Database update failed.\033[0m"

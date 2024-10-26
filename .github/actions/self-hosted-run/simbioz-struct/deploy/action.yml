@@ -7,6 +7,10 @@ inputs:
   update_simbioz:
     required: true
     type: boolean
+  exclusive_update:
+    description: 'Turn off database during update'
+    required: false
+    type: boolean
   MAIN_PATH:
     required: true
     type: string
@@ -104,6 +108,7 @@ runs:
         DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        exclusive_update: ${{ inputs.exclusive_update }}
 
     - name: Hard update (base module)
       if: ${{ inputs.base_update == 'true' }}
