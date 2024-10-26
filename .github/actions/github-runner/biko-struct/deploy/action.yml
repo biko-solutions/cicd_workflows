@@ -92,9 +92,9 @@ runs:
 
     - name: Debug
       run: |
-        echo $SCRIPTDIR
-        echo $PYTHON_SCRIPT
-        echo $DB_RESULT
+        echo 'SCRIPTDIR ==>' $SCRIPTDIR
+        echo 'PYTHON_SCRIPT ==>' $PYTHON_SCRIPT
+        echo 'DB_RESULT ==>' $DB_RESULT
       shell: bash
       env:
         SCRIPTDIR: ${{env.SCRIPTDIR}}
