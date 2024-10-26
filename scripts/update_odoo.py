@@ -129,6 +129,7 @@ def monitor_and_update(
                     time.sleep(5)
 
     if error_encountered:
+        logger.error("========= Some databases failed to update. =============")
         sys.exit(1)
     else:
         sys.exit(0)
