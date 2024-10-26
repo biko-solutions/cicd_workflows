@@ -30,5 +30,5 @@ runs:
         ssh deploy "mkdir -p $DIR"
         scp ./scripts/update_odoo.py deploy:"$DIR/update_odoo.py"
         ssh deploy "cd \"$DIR\" && python3 -m venv venv && source ./venv/bin/activate && pip install psutil"
-        echo "PYTHON_SCRIPT=\"$DIR/venv/bin/python3 $DIR/update_odoo.py\"" >> $GITHUB_OUTPUT
+        echo "PYTHON_SCRIPT=$DIR/venv/bin/python3 $DIR/update_odoo.py" >> $GITHUB_OUTPUT
       shell: bash
