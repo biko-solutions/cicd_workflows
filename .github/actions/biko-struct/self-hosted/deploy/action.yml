@@ -50,7 +50,7 @@ runs:
         SERVER_USER: ${{inputs.SERVER_USER}}
 
     - name: Log checkout
-      run: echo -e "\033[32m ============= CHECKOUT CICD REPO =============\033[0m"
+      run: echo -e "\033[32m ============= PULLING THE CICD REPO =============\033[0m"
       shell: bash
 
     - uses: actions/checkout@v4.2.2
@@ -63,8 +63,8 @@ runs:
     - name: Set venv
       id: create-python-script
       run: |
-        run: echo -e "\033[32m ============= CHECKOUT CICD REPO =============\033[0m"
-        echo -e "::group::\033[32mSetting VENV Log\033[0m"
+        run: echo -e "\033[32m ============= CREATING PYTHON VENV =============\033[0m"
+        echo -e "\033[32m ::group::Setting VENV Log\033[320"
         python3 -m venv ./venv
         source ./venv/bin/activate
         pip install psutil
@@ -90,7 +90,9 @@ runs:
         ODOO_DB: ${{inputs.ODOO_DB}}
 
     - name: Show DB list
-      run: echo $DB_LIST
+      run: |
+        echo -e "\033[32mDATABASES\033[320"
+        echo $DB_LIST
       env:
         DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
       shell: bash

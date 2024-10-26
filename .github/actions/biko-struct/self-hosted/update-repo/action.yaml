@@ -13,7 +13,7 @@ runs:
   steps:
     - name: Update repository
       run: |
-        echo ============= UPDATING REPOSITORY =============
+        echo -e "\033[32m============= UPDATING REPOSITORY =============\033[320"
         echo "::group::Updating log"
         cd $MAIN_PATH
         sudo -u $SERVER_USER git config --local --add safe.directory $MAIN_PATH
