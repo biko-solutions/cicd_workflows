@@ -20,16 +20,14 @@ runs:
         sudo -u $SERVER_USER sh odoo_set_icons.sh || true
       shell: bash
     - name: Update from BIKO repo
-      env:
-        PTH_STRING: ${{'$PTH'}}
       run: |
         echo ===== Update from BIKO repo ====
         echo $CUSTOM_PATH
         if [[ -n "$CUSTOM_PATH" ]]; then
           for PTH in {$CUSTOM_PATH}
           do
-            if [[ -d "$PTH_STRING" ]]; then
-              cd "$PTH_STRING"
+            if [[ -d "$PTH" ]]; then
+              cd "$PTH"
               echo "Current directory: " && pwd
               if [[ $? -eq 0 ]]; then
                 git add . && git diff-index --quiet HEAD || (git stash && git stash drop)
@@ -37,7 +35,7 @@ runs:
                 git pull
               fi
             else
-              echo "No folder $PTH_STRING"
+              echo "No folder $PTH"
             fi
           done
         else
