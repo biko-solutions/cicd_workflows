@@ -47,11 +47,11 @@ runs:
                 sudo -u $SERVER_USER git pull
               fi
             else
-              echo -e "::group::\033[34m"No folder $PTH\033[340"
+              echo -e "\033[34m"No folder $PTH\033[340"
             fi
           done
         else
-          echo -e "::group::\033[34m"NO CUSTOM FOLDERS SPECIFIED\033[340"
+          echo -e "\033[34m"NO CUSTOM FOLDERS SPECIFIED\033[340"
         fi
         echo "::endgroup::"
       shell: bash
