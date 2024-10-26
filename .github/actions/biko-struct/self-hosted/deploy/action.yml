@@ -16,9 +16,6 @@ inputs:
   USE_VENV:
     required: true
     type: string
-  RUNNER_GROUP:
-    required: true
-    type: string
   ODOO_DB:
     required: false
     type: string
