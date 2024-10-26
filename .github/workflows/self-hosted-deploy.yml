@@ -1,5 +1,3 @@
-# Этот action будет запускаться при вызове из другого workflow
-# Предназначен для работы с self-hosted runner'om
 name: Deploy ACTION
 
 on:
@@ -33,7 +31,6 @@ env:
   ODOO_DB: ${{inputs.ODOO_DB}}
   ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
   SERVER_USER: ${{inputs.SERVER_USER}}
-  PYTHON_SCRIPT: ${{inputs.MAIN_PATH}}/scripts/update_odoo.py
   USE_VENV: ${{inputs.USE_VENV}}
 
 jobs:
@@ -41,29 +38,39 @@ jobs:
     runs-on:
       group: ${{inputs.RUNNER_GROUP}}
     steps:
-      - name: Check
-        run: echo ${{ github.repository }}
-      # - name: Check settings
-      #   run: |
-      #     if [[ ! -d "$MAIN_PATH" ]]; then
-      #       echo "Folder $MAIN_PATH does not exist."
-      #       exit 100
-      #     fi
-      #     if [[ -z "$SERVER_USER" ]]; then
-      #       echo "PROD_SERV_USER variable is not set."
-      #       exit 100
-      #     fi
-      #     if [[ -z "$ODOO_SERVICE" ]]; then
-      #       echo "PROD_ODOO_SERVICE variable is not set."
-      #       exit 100
-      #     fi
+      - name: Check settings
+        run: |
+          if [[ ! -d "$MAIN_PATH" ]]; then
+            echo "Folder $MAIN_PATH does not exist."
+            exit 100
+          fi
+          if [[ -z "$SERVER_USER" ]]; then
+            echo "PROD_SERV_USER variable is not set."
+            exit 100
+          fi
+          if [[ -z "$ODOO_SERVICE" ]]; then
+            echo "PROD_ODOO_SERVICE variable is not set."
+            exit 100
+          fi
+
       - uses: actions/checkout@v4.2.2
         with:
           repository: biko-solutions/cicd_workflows
           token: ${{ secrets.CICD_TOKEN }}
           fetch-depth: 0
-      - name: List files
-        run: ls -la
+
+      - name: Set script path
+        run: |
+          echo "=== SETTING SCRIPT PATH ==="
+          echo "PYTHON_SCRIPT=$(pwd)/scripts/update_odoo.py" >> $GITHUB_ENV
+          echo "PYTHON_SCRIPT=$PYTHON_SCRIPT"
+
+      - name: Check script path
+        run: |
+          echo "$PYTHON_SCRIPT"
+        env:
+          PYTHON_SCRIPT: ${{ env.PYTHON_SCRIPT }}
+
       # - name: Update repository
       #   run: |
       #     cd $MAIN_PATH
@@ -99,6 +106,7 @@ jobs:
       #     echo "=== DATABASES ==="
       #     echo "DB_RESULT=$DB_RESULT" >> $GITHUB_ENV
       #     echo "DB_RESULT=$DB_RESULT"
+
       # - name: Soft update (only changes)
       #   if: ${{!inputs.base_update}}
       #   run: |
@@ -138,5 +146,6 @@ jobs:
       #       sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
       #       sudo -u $SERVER_USER "No submodule updates."
       #     fi
+
       - uses: colpal/actions-clean@v1
         if: ${{ always() }}
