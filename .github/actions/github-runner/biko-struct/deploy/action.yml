@@ -81,7 +81,7 @@ runs:
       shell: bash
       env:
         SCRIPTDIR: ${{env.SCRIPTDIR}}
-        PYTHON_SCRIPT: ${{${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}}}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
 
     # - name: Update repository
     #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/biko-struct/update-repo@main
