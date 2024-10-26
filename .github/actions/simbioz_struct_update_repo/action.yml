@@ -1,0 +1,49 @@
+name: Update repository (BIKO Template)
+
+inputs:
+  MAIN_PATH:
+    required: true
+    type: string
+  CUSTOM_PATH:
+    required: true
+    type: string
+  update_simbioz:
+    required: true
+    type: string
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Update from SIMBIOZ repo - prepare
+      if: ${{inputs.update_simbioz}}
+      run: |
+        cd ${{inputs.MAIN_PATH}}
+        sudo -u $SERVER_USER git submodule foreach --recursive git config --local --replace-all safe.directory '*'
+        sudo -u $SERVER_USER git submodule foreach --recursive git config --local --add safe.directory '*'
+        sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard
+        sudo -u $SERVER_USER git submodule foreach --recursive git pull
+        sudo -u $SERVER_USER sh odoo_set_icons.sh || true
+      shell: bash
+    - name: Update from BIKO repo - prepare
+      env:
+        PTH_STRING: ${{'$PTH'}}
+      run: |
+        if [[ -n "${{inputs.CUSTOM_PATH}}" ]]; then
+          for PTH in {${{inputs.CUSTOM_PATH}}}
+          do
+            if [[ -d "$PTH_STRING" ]]; then
+              cd "$PTH_STRING"
+              echo "Current directory: " && pwd
+              if [[ $? -eq 0 ]]; then
+                git add . && git diff-index --quiet HEAD || (git stash && git stash drop)
+                git reset --hard
+                git pull
+              fi
+            else
+              echo "No folder $PTH_STRING"
+            fi
+          done
+        else
+          echo "NO CUSTOM FOLDERS SPECIFIED"
+        fi
+      shell: bash
