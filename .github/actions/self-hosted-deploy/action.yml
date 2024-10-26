@@ -1,0 +1,143 @@
+name: Deploy ACTION
+
+inputs:
+  base_update:
+    required: false
+    type: boolean
+  MAIN_PATH:
+    required: true
+    type: string
+  ODOO_SERVICE:
+    required: true
+    type: string
+  SERVER_USER:
+    required: true
+    type: string
+  USE_VENV:
+    required: true
+    type: string
+  RUNNER_GROUP:
+    required: true
+    type: string
+  ODOO_DB:
+    required: false
+    type: string
+
+env:
+  MAIN_PATH: ${{inputs.MAIN_PATH}}
+  ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+  ODOO_DB: ${{inputs.ODOO_DB}}
+  ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
+  SERVER_USER: ${{inputs.SERVER_USER}}
+  USE_VENV: ${{inputs.USE_VENV}}
+
+jobs:
+  deploy:
+    steps:
+      - name: Check settings
+        run: |
+          if [[ ! -d "$MAIN_PATH" ]]; then
+            echo "Folder $MAIN_PATH does not exist."
+            exit 100
+          fi
+          if [[ -z "$SERVER_USER" ]]; then
+            echo "SERVER_USER variable is not set."
+            exit 100
+          fi
+          if [[ -z "$ODOO_SERVICE" ]]; then
+            echo "ODOO_SERVICE variable is not set."
+            exit 100
+          fi
+        shell: bash
+
+      - uses: actions/checkout@v4.2.2
+        with:
+          repository: biko-solutions/cicd_workflows
+          token: ${{ secrets.CICD_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set venv
+        run: |
+          python3 -m venv ./venv
+          source ./venv/bin/activate
+          pip install psutil
+          deactivate
+          echo "PYTHON_SCRIPT=$(pwd)/venv/bin/python3 $(pwd)/scripts/update_odoo.py" >> $GITHUB_ENV
+          echo "PYTHON_SCRIPT=\"$PYTHON_SCRIPT\""
+        shell: bash
+
+      - name: Update repository
+        uses: biko-solutions/cicd_workflows/.github/actions/biko_struct_update_repo@main
+        with:
+          MAIN_PATH: ${{env.MAIN_PATH}}
+
+      - name: Get database list
+        run: |
+          echo "=== GET DATABASE LIST ==="
+          if [[ "$ODOO_DB" == -* ]]; then
+            if [[ "$USE_VENV" == "true" ]]; then
+              DB_RESULT=$(sudo -u $SERVER_USER bash -c "source '$MAIN_PATH/venv/bin/activate' && click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
+            else
+              DB_RESULT=$(sudo -u $SERVER_USER bash -c "click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
+            fi
+          elif [[ -n "$ODOO_DB" ]]; then
+              DB_RESULT=$(echo $ODOO_DB | tr ',' ' ')
+          else
+            if [[ "$USE_VENV" == "true" ]]; then
+              DB_RESULT=$(sudo -u $SERVER_USER bash -c "source '$MAIN_PATH/venv/bin/activate' && click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
+            else
+              DB_RESULT=$(sudo -u $SERVER_USER bash -c "click-odoo-listdb -c '$ODOO_CONFIG' | tr '\n' ' '")
+            fi
+          fi
+          echo "=== DATABASES ==="
+          echo "DB_RESULT=$DB_RESULT" >> $GITHUB_ENV
+          echo "DB_RESULT=$DB_RESULT"
+        shell: bash
+
+      - name: Soft update (only changes)
+        if: ${{!inputs.base_update}}
+        run: |
+          sudo systemctl restart $ODOO_SERVICE && sleep 10
+          echo "=== Starting parallel database update ==="
+          venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
+          sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_RESULT" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag
+        env:
+          DB_RESULT: ${{ env.DB_RESULT }}
+          PYTHON_SCRIPT: ${{ env.PYTHON_SCRIPT }}
+        shell: bash
+
+      - name: Hard update (base module)
+        if: ${{inputs.base_update}}
+        run: |
+          echo "=== STOPPING ODOO ==="
+          sudo systemctl stop $ODOO_SERVICE && sleep 10
+
+          echo "=== Starting database update ==="
+          venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
+          sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_RESULT" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" --hard $venv_flag
+
+          sudo systemctl start $ODOO_SERVICE && sleep 10
+          echo "=== SHOW STATUS ODOO ==="
+          sudo systemctl status $ODOO_SERVICE
+        env:
+          DB_RESULT: ${{ env.DB_RESULT }}
+          PYTHON_SCRIPT: ${{ env.PYTHON_SCRIPT }}
+        shell: bash
+
+      - name: Update submodules HASH
+        run: |
+          cd $MAIN_PATH
+          sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard > /dev/null 2>&1
+          if [[ -n $(sudo -u $SERVER_USER git status -s) ]]; then
+            sudo -u $SERVER_USER git add -A
+            sudo -u $SERVER_USER git commit -m "Update submodules"
+            sudo -u $SERVER_USER git push origin ${{ github.ref_name }}
+            sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
+          else
+            sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
+            echo "No submodule updates."
+          fi
+        shell: bash
+
+      - uses: colpal/actions-clean@v1
+        if: ${{ always() }}
