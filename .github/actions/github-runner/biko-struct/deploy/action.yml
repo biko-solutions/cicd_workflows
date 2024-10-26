@@ -106,8 +106,8 @@ runs:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
-        PYTHON_SCRIPT2: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
-        DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+        DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
