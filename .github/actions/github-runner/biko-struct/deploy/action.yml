@@ -128,7 +128,7 @@ runs:
     - name: Update submodules HASH
       run: |
         echo -e "::group::\033[32m ============= UPDATING SUBMODULES HASH =============\033[0m"
-        cat >~/update_script.sh <<EOF
+        cat >~/update_hash.sh <<EOF
         #!/bin/bash
         cd $MAIN_PATH
         sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard > /dev/null 2>&1
@@ -142,7 +142,7 @@ runs:
           echo "No submodule updates."
         fi
         EOF
-        cat ~/update_script.sh
+        cat ~/update_hash.sh
         echo "::endgroup::"
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
