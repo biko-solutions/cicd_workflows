@@ -74,15 +74,6 @@ runs:
       with:
         CICD_TOKEN: ${{inputs.CICD_TOKEN}}
 
-    - name: Debug
-      run: |
-        echo $SCRIPTDIR
-        echo $PYTHON_SCRIPT
-      shell: bash
-      env:
-        SCRIPTDIR: ${{env.SCRIPTDIR}}
-        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
-
     - name: Update repository
       uses: biko-solutions/cicd_workflows/.github/actions/github-runner/biko-struct/update-repo@main
       with:
@@ -98,6 +89,17 @@ runs:
         USE_VENV: ${{inputs.USE_VENV}}
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
         ODOO_DB: ${{inputs.ODOO_DB}}
+
+    - name: Debug
+      run: |
+        echo $SCRIPTDIR
+        echo $PYTHON_SCRIPT
+        echo $DB_RESULT
+      shell: bash
+      env:
+        SCRIPTDIR: ${{env.SCRIPTDIR}}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+        DB_RESULT: ${{ steps.create-python-script.outputs.DB_RESULT }}
 
     - name: Soft update (only changes)
       if: ${{ inputs.base_update == 'false' }}
