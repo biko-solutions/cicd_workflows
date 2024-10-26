@@ -36,7 +36,7 @@ runs:
   steps:
     - name: Check settings
       run: |
-        echo $INPUT_MAIN_PATH
+        echo $MAIN_PATH
         # if [[ ! -d "$MAIN_PATH" ]]; then
         #   echo "Folder $MAIN_PATH does not exist."
         #   exit 100
@@ -51,7 +51,7 @@ runs:
         # fi
       shell: bash
       env:
-        INPUT_MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     # - uses: actions/checkout@v4.2.2
     #   with:
