@@ -42,7 +42,7 @@ def update_database(
             server_user,
             "bash",
             "-c",
-            f"click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level error",
+            f"source '/home/{server_user}/.bashrc' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level error",
         ]
 
     if hard_update:
