@@ -13,7 +13,7 @@ runs:
   steps:
     - name: Update repository
       run: |
-        echo "::group::My title"
+        echo "### Hello world! :rocket:" >> $GITHUB_STEP_SUMMARY
         cd $MAIN_PATH
         sudo -u $SERVER_USER git config --local --add safe.directory $MAIN_PATH
         sudo -u $SERVER_USER git submodule foreach --recursive git config --local --add safe.directory '*'
@@ -24,7 +24,6 @@ runs:
         sudo -u $SERVER_USER git submodule update --init --recursive --remote
         sudo -u $SERVER_USER git submodule foreach --recursive 'git fetch origin --tags && git checkout $(git config -f $toplevel/.gitmodules submodule.$name.branch || echo "main") && git pull'
         sudo -u $SERVER_USER sh odoo_set_icons.sh 2>/dev/null || true
-        echo "::endgroup::"
       shell: bash
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
