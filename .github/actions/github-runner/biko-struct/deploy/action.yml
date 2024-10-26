@@ -74,7 +74,7 @@ runs:
         CICD_TOKEN: ${{inputs.CICD_TOKEN}}
 
     - name: Update repository
-      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/biko-struct/update-repo/action.yaml@main
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/biko-struct/update-repo@main
       with:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
