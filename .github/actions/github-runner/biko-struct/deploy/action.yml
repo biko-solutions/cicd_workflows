@@ -83,11 +83,11 @@ runs:
         SCRIPTDIR: ${{env.SCRIPTDIR}}
         PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
 
-    # - name: Update repository
-    #   uses: biko-solutions/cicd_workflows/.github/actions/github-runner/biko-struct/update-repo@main
-    #   with:
-    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
-    #     SERVER_USER: ${{ inputs.SERVER_USER }}
+    - name: Update repository
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/biko-struct/update-repo@main
+      with:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
 
     # - name: Get database list
     #   id: get-db-list
