@@ -28,7 +28,7 @@ runs:
   steps:
     - name: Soft update (only changes)
       run: |
-        echo -e "::group::\033[32m=== Starting parallel database update ===\033[320"
+        echo -e "::group::\033[32m=== Starting parallel database update ===\033[0m"
         sudo systemctl restart $ODOO_SERVICE && sleep 10
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag
