@@ -113,17 +113,17 @@ runs:
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
-    # - name: Hard update (base module)
-    #   if: ${{ inputs.base_update == 'true' }}
-    #   uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-base@main
-    #   with:
-    #     ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
-    #     USE_VENV: ${{ inputs.USE_VENV }}
-    #     SERVER_USER: ${{ inputs.SERVER_USER }}
-    #     PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
-    #     DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
-    #     ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
-    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
+    - name: Hard update (base module)
+      if: ${{ inputs.base_update == 'true' }}
+      uses: biko-solutions/cicd_workflows/.github/actions/github-runner/common/update-base@main
+      with:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        USE_VENV: ${{ inputs.USE_VENV }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
+        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
+        DB_RESULT: ${{ steps.get-db-list.outputs.DB_RESULT }}
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     # - name: Update submodules HASH
     #   run: |
