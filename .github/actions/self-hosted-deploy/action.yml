@@ -69,8 +69,6 @@ runs:
 
     - name: Update repository
       uses: biko-solutions/cicd_workflows/.github/actions/biko_struct_update_repo@main
-      with:
-        MAIN_PATH: ${{ env.MAIN_PATH }}
 
     - name: Get database list
       run: |

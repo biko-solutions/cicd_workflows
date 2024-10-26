@@ -1,10 +1,5 @@
 name: Update repository (BIKO Template)
 
-inputs:
-  MAIN_PATH:
-    required: true
-    type: string
-
 runs:
   using: 'composite'
   steps:
