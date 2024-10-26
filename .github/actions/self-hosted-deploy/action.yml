@@ -23,8 +23,8 @@ inputs:
     required: false
     type: string
 
-# env:
-#   MAIN_PATH: ${{inputs.MAIN_PATH}}
+env:
+  MAIN_PATH: ${{ inputs.MAIN_PATH }}
 #   ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
 #   ODOO_DB: ${{inputs.ODOO_DB}}
 #   ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
@@ -50,8 +50,8 @@ runs:
         #   exit 100
         # fi
       shell: bash
-      env:
-        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+      # env:
+      #   MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     # - uses: actions/checkout@v4.2.2
     #   with:
