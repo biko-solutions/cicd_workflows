@@ -137,5 +137,5 @@ runs:
         SERVER_USER: ${{ inputs.SERVER_USER }}
       shell: bash
 
-    - uses: colpal/actions-clean@v1
-      if: ${{ always() }}
+    # - uses: colpal/actions-clean@v1
+    #   if: ${{ always() }}

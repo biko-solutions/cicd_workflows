@@ -122,5 +122,5 @@ runs:
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
-    - uses: colpal/actions-clean@v1
-      if: ${{ always() }}
+    # - uses: colpal/actions-clean@v1
+    #   if: ${{ always() }}
