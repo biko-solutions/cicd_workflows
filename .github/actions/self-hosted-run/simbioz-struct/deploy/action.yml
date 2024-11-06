@@ -121,6 +121,3 @@ runs:
         DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
-
-    # - uses: colpal/actions-clean@v1
-    #   if: ${{ always() }}
