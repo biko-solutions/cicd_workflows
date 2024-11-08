@@ -68,11 +68,6 @@ runs:
         echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT
         echo -e '\033[32mUpdate status ===>' $update_status '\033[0m'
         echo "::endgroup::"
-
-        # if [ $update_status -ne 0 ]; then
-        #   echo -e "\033[31mError: Database update failed.\033[0m"
-        #   exit 1
-        # fi
       env:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
@@ -86,11 +81,17 @@ runs:
       shell: bash
 
     - name: Start Odoo
-      # if: ${{ inputs.exclusive_update == 'true' || failure()}}
+      if: ${{ always() }}
       if: ${{ inputs.exclusive_update == 'true' }}
       run: |
         echo "DEBUG ====> Restarting Odoo Service"
         sudo systemctl restart $ODOO_SERVICE
+        
+        if [ $UPDATE_RESULT -ne 0 ]; then
+          echo -e "\033[31mError: Database update failed.\033[0m"
+          exit 1
+        fi
       env:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        UPDATE_RESULT: ${{ steps.update-database.outputs.UPDATE_RESULT }}
       shell: bash
