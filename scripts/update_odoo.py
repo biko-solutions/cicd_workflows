@@ -13,31 +13,31 @@ import psutil
 # Configure the logger
 logging.basicConfig(
     stream=sys.stdout,
-    level=logging.DEBUG,
+    level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
 
 
 def tail_log_file(log_file, stop_event, max_wait_time=30):
-    """Функция для параллельного чтения и вывода содержимого лог-файла с возможностью остановки."""
+    """Function to tail a log file and print the output to the logger."""
 
-    # Ожидание появления лог-файла
+    # waiting for log-file to be created
     wait_time = 0
     while not os.path.exists(log_file) and wait_time < max_wait_time:
         logger.debug(
-            f"[DEBUG] Лог-файл {log_file} пока не существует, ожидаем его создания..."
+            f"[DEBUG] File {log_file} does not exist yet, waiting for its creation..."
         )
         time.sleep(1)
         wait_time += 1
 
     if not os.path.exists(log_file):
         logger.error(
-            f"[ERROR] Лог-файл {log_file} не создан после ожидания {max_wait_time} секунд."
+            f"[ERROR] Log file {log_file} was not created after waiting for {max_wait_time} seconds."
         )
         return
 
-    logger.debug("[DEBUG] Лог-файл найден, запускаем tail -f")
+    logger.debug("[DEBUG] Log file found, starting tail -f")
 
     with subprocess.Popen(
         ["tail", "-f", log_file],
@@ -46,28 +46,28 @@ def tail_log_file(log_file, stop_event, max_wait_time=30):
         text=True,
     ) as proc:
         index = 0
-        logger.debug("[DEBUG] Запущен процесс tail -f")
+        logger.debug("[DEBUG] tail -f process started")
 
         while not stop_event.is_set():
-            logger.debug(f"[DEBUG] Проверка перед чтением строки, итерация {index}")
+            logger.debug(f"[DEBUG] Checking before reading line, iteration {index}")
             index += 1
 
-            # Проверка состояния процесса
+            # Check the process state
             if proc.poll() is not None:
-                logger.debug("[DEBUG] Процесс tail завершился")
+                logger.debug("[DEBUG] tail process has finished")
                 break
 
             line = proc.stdout.readline()
             if line:
-                logger.debug("[DEBUG] Получена строка из потока stdout")
+                logger.debug("[DEBUG] Line received from stdout stream")
                 logger.info(f"[LOG OUTPUT] {line.strip()}")
             else:
-                logger.debug("[DEBUG] Строка пустая, возможно конец потока")
+                logger.debug("[DEBUG] Line is empty, possibly end of stream")
                 break
 
-        # Завершаем процесс и выводим сообщение
+        # Terminate the process and log the message
         proc.terminate()
-        logger.debug("[DEBUG] Процесс tail завершен вручную")
+        logger.debug("[DEBUG] tail process terminated manually")
 
 
 def update_database(
@@ -77,6 +77,7 @@ def update_database(
     server_user,
     hard_update,
     use_venv,
+    show_log,
 ):
     log_file = f"/tmp/upd_odoo_log_{db_name}_{time.strftime('%Y%m%d_%H%M%S')}.log"
     if use_venv:
@@ -109,9 +110,10 @@ def update_database(
     # Флаг для остановки потока
     stop_event = threading.Event()
 
-    # Запуск потока для параллельного чтения логов
-    log_thread = threading.Thread(target=tail_log_file, args=(log_file, stop_event))
-    log_thread.start()
+    # Запуск потока для параллельного чтения логов, если show_log == True
+    if show_log:
+        log_thread = threading.Thread(target=tail_log_file, args=(log_file, stop_event))
+        log_thread.start()
 
     try:
         result = subprocess.run(command, check=True)
@@ -123,8 +125,9 @@ def update_database(
         error_found = True
     finally:
         # Установка флага для остановки потока и ожидание его завершения
-        stop_event.set()
-        log_thread.join()
+        if show_log:
+            stop_event.set()
+            log_thread.join()
 
     # Always check logs for errors, regardless of the process exit code
     with open(log_file, "r") as file:
@@ -149,6 +152,7 @@ def monitor_and_update(
     max_ram_usage=80,
     hard_update=False,
     use_venv=True,
+    show_log=False,
 ):
     active_tasks = 0
     error_encountered = False
@@ -185,6 +189,7 @@ def monitor_and_update(
                         server_user,
                         hard_update,
                         use_venv,
+                        show_log,
                     )
                     active_tasks += 1
                     logger.info(f"Started task for {db}, active tasks: {active_tasks}")
@@ -222,6 +227,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--use-venv", action="store_true", help="Use virtual environment during update"
     )
+    parser.add_argument("--show_log", action="store_true", help="Show update log")
 
     args = parser.parse_args()
 
@@ -233,4 +239,5 @@ if __name__ == "__main__":
         args.user,
         hard_update=args.hard,
         use_venv=args.use_venv,
+        show_log=args.show_log,
     )

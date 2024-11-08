@@ -26,6 +26,9 @@ inputs:
     type: string
   CICD_TOKEN:
     required: true
+  show_log:
+    required: false
+    type: boolean
 
 runs:
   using: 'composite'
@@ -105,6 +108,7 @@ runs:
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         exclusive_update: ${{ inputs.exclusive_update }}
+        show_log: ${{ inputs.show_log }}
 
     - name: Hard update (base module)
       if: ${{ inputs.base_update == 'true' }}
@@ -117,6 +121,7 @@ runs:
         DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        show_log: ${{ inputs.show_log }}
 
     - name: Update submodules HASH
       run: |

@@ -27,6 +27,10 @@ inputs:
     required: false
     default: false
     type: boolean
+  show_log:
+    type: boolean
+    required: false
+    default: false
 
 runs:
   using: 'composite'
@@ -43,7 +47,7 @@ runs:
         sleep 10
 
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
-        sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag
+        sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag --show_log $show_log
         update_status=$?
         echo -e '\033[32mUpdate status ===>' $update_status '\033[0m'
 
@@ -63,4 +67,5 @@ runs:
         ODOO_CONFIG: ${{ inputs.ODOO_CONFIG }}
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         exclusive_update: ${{ inputs.exclusive_update }}
+        show_log: ${{ inputs.show_log }}
       shell: bash

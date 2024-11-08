@@ -22,6 +22,10 @@ inputs:
   ODOO_CONFIG:
     type: string
     required: true
+  show_log:
+    type: boolean
+    required: false
+    default: false
 
 runs:
   using: 'composite'
@@ -34,7 +38,7 @@ runs:
 
         echo -e "\033[34m=== Starting database update ===\033[0m"
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
-        sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" --hard $venv_flag
+        sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" --hard $venv_flag --show_log $show_log
         update_status=$?
 
         sudo systemctl start $ODOO_SERVICE && sleep 10
@@ -53,4 +57,5 @@ runs:
         DB_LIST: ${{ inputs.DB_LIST }}
         ODOO_CONFIG: ${{ inputs.ODOO_CONFIG }}
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        show_log: ${{ inputs.show_log }}
       shell: bash
