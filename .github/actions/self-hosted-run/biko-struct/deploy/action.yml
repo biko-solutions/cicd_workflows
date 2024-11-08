@@ -80,14 +80,14 @@ runs:
       shell: bash
 
     - name: Update repository
-      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/biko-struct/update-repo@$GITHUB_REF_NAME
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/biko-struct/update-repo@${{env.GITHUB_REF_NAME}}
       with:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
 
     - name: Get database list
       id: get-db-list
-      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/get-db-list@$GITHUB_REF_NAME
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/get-db-list@${{env.GITHUB_REF_NAME}}
       with:
         MAIN_PATH: ${{inputs.MAIN_PATH}}
         SERVER_USER: ${{inputs.SERVER_USER}}
@@ -97,7 +97,7 @@ runs:
 
     - name: Soft update (only changes)
       if: ${{ inputs.base_update == 'false' }}
-      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-changed@$GITHUB_REF_NAME
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-changed@${{env.GITHUB_REF_NAME}}
       with:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
@@ -111,7 +111,7 @@ runs:
 
     - name: Hard update (base module)
       if: ${{ inputs.base_update == 'true' }}
-      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-base@$GITHUB_REF_NAME
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-base@${{env.GITHUB_REF_NAME}}
       with:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
