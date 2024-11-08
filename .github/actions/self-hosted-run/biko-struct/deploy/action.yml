@@ -78,11 +78,11 @@ runs:
         echo "::endgroup::"
       shell: bash
 
-    # - name: Update repository
-    #   uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/biko-struct/update-repo@debug
-    #   with:
-    #     MAIN_PATH: ${{ inputs.MAIN_PATH }}
-    #     SERVER_USER: ${{ inputs.SERVER_USER }}
+    - name: Update repository
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/biko-struct/update-repo@debug
+      with:
+        MAIN_PATH: ${{ inputs.MAIN_PATH }}
+        SERVER_USER: ${{ inputs.SERVER_USER }}
 
     - name: Get database list
       id: get-db-list

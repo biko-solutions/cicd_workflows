@@ -46,7 +46,7 @@ runs:
     - name: Hard update (base module)
       id: update-database
       run: |
-        echo -e "\::group::033[34m=== Starting database update ===\033[0m"
+        echo -e "::group::\033[34m=== Starting database update ===\033[0m"
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         showlog_flag=$([ "$SHOW_LOG" == "true" ] && echo "--show-log" || echo "")
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" --hard $venv_flag $showlog_flag
