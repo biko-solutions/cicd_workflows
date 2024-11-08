@@ -62,6 +62,7 @@ runs:
 
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         showlog_flag=$([ "$SHOW_LOG" == "true" ] && echo "--show-log" || echo "")
+        echo -e "\033[34msudo -u \"$SERVER_USER\" \"$PYTHON_SCRIPT\" --databases \"$DB_LIST\" --main_path \"$MAIN_PATH\" --config \"$ODOO_CONFIG\" --user \"$SERVER_USER\" \"$venv_flag\" \"$showlog_flag\"\033[0m"
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag $showlog_flag
         update_status=$?
 
