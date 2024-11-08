@@ -26,7 +26,10 @@ def tail_log_file(log_file, stop_event):
         stderr=subprocess.PIPE,
         text=True,
     ) as proc:
+        index = 0
         while not stop_event.is_set():
+            logger.info(f"[LOG OUTPUT]===> {index}")
+            index += 1
             line = proc.stdout.readline()
             if line:
                 logger.info(f"[LOG OUTPUT] {line.strip()}")
