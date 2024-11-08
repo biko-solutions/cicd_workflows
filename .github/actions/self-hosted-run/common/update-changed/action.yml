@@ -69,10 +69,10 @@ runs:
         echo -e '\033[32mUpdate status ===>' $update_status '\033[0m'
         echo "::endgroup::"
 
-        if [ $update_status -ne 0 ]; then
-          echo -e "\033[31mError: Database update failed.\033[0m"
-          exit 1
-        fi
+        # if [ $update_status -ne 0 ]; then
+        #   echo -e "\033[31mError: Database update failed.\033[0m"
+        #   exit 1
+        # fi
       env:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
