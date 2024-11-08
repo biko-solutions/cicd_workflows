@@ -51,6 +51,7 @@ def update_database(
     error_found = False
 
     logger.info(f"Starting database update for {db_name}")
+    logger.info(f"Logfile {log_file}")
     try:
         result = subprocess.run(command, check=True)
         logger.info(
