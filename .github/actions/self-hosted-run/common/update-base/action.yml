@@ -30,27 +30,25 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Hard update (base module)
+    - name: Log step
+      run: echo -e "\033[32m=== Starting parallel database update ===\033[0m"
+      shell: bash
+
+    - name: Stop Odoo
       run: |
-        echo -e "::group::\033[32m=== Starting parallel database update ===\033[0m"
         echo -e "\033[34m=== STOPPING ODOO ===\033[0m"
         sudo systemctl stop $ODOO_SERVICE && sleep 10
+      shell: bash
 
+    - name: Hard update (base module)
+      id: update-database
+      run: |
         echo -e "\033[34m=== Starting database update ===\033[0m"
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" --hard $venv_flag --show_log $show_log
         update_status=$?
-
-        sudo systemctl start $ODOO_SERVICE && sleep 10
-        echo -e "\033[34m=== SHOW STATUS ODOO ===\033[0m"
-        sudo systemctl status $ODOO_SERVICE
-        echo "::endgroup::"
-        if [ $update_status -ne 0 ]; then
-          echo -e "\033[31mError: Database update failed.\033[0m"
-          exit 1
-        fi
+        echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT
       env:
-        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
         PYTHON_SCRIPT: ${{ inputs.PYTHON_SCRIPT }}
@@ -59,3 +57,19 @@ runs:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         show_log: ${{ inputs.show_log }}
       shell: bash
+
+    - name: Start Odoo
+      run: |
+        sudo systemctl start $ODOO_SERVICE
+        sleep 10
+        echo -e "\033[34m=== SHOW ODOO STATUS ===\033[0m"
+        sudo systemctl status $ODOO_SERVICE
+        if [ $UPDATE_RESULT -ne 0 ]; then
+          echo -e "\033[31mError: Database update failed.\033[0m"
+          exit 1
+        fi
+      env:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+        UPDATE_RESULT: ${{ steps.update-database.outputs.UPDATE_RESULT }}
+      shell: bash
+      if: ${{ always() }}
