@@ -79,14 +79,14 @@ runs:
       shell: bash
 
     - name: Update repository
-      uses: ./biko-struct/update-repo
+      uses: .github/actions/self-hosted-run/biko-struct/update-repo
       with:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
 
     - name: Get database list
       id: get-db-list
-      uses: ./common/get-db-list
+      uses: .github/actions/self-hosted-run/common/get-db-list
       with:
         MAIN_PATH: ${{inputs.MAIN_PATH}}
         SERVER_USER: ${{inputs.SERVER_USER}}
@@ -96,7 +96,7 @@ runs:
 
     - name: Soft update (only changes)
       if: ${{ inputs.base_update == 'false' }}
-      uses: ./common/update-changed
+      uses: .github/actions/self-hosted-run/common/update-changed
       with:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
@@ -110,7 +110,7 @@ runs:
 
     - name: Hard update (base module)
       if: ${{ inputs.base_update == 'true' }}
-      uses: ./common/update-base
+      uses: .github/actions/self-hosted-run/common/update-base
       with:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
