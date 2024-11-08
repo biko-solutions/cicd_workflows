@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 import re
 import subprocess
 import sys
@@ -18,20 +19,26 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def tail_log_file_direct(log_file, stop_event):
-    """Чтение лог-файла напрямую с паузами."""
-    with open(log_file, "r") as file:
-        file.seek(0, 2)  # Перейти в конец файла
-        while not stop_event.is_set():
-            line = file.readline()
-            if line:
-                logger.info(f"[LOG OUTPUT] {line.strip()}")
-            else:
-                time.sleep(1)  # Ждать перед повторной проверкой
-
-
-def tail_log_file(log_file, stop_event):
+def tail_log_file(log_file, stop_event, max_wait_time=30):
     """Функция для параллельного чтения и вывода содержимого лог-файла с возможностью остановки."""
+
+    # Ожидание появления лог-файла
+    wait_time = 0
+    while not os.path.exists(log_file) and wait_time < max_wait_time:
+        logger.debug(
+            f"[DEBUG] Лог-файл {log_file} пока не существует, ожидаем его создания..."
+        )
+        time.sleep(1)
+        wait_time += 1
+
+    if not os.path.exists(log_file):
+        logger.error(
+            f"[ERROR] Лог-файл {log_file} не создан после ожидания {max_wait_time} секунд."
+        )
+        return
+
+    logger.debug("[DEBUG] Лог-файл найден, запускаем tail -f")
+
     with subprocess.Popen(
         ["tail", "-f", log_file],
         stdout=subprocess.PIPE,
@@ -103,9 +110,7 @@ def update_database(
     stop_event = threading.Event()
 
     # Запуск потока для параллельного чтения логов
-    log_thread = threading.Thread(
-        target=tail_log_file_direct, args=(log_file, stop_event)
-    )
+    log_thread = threading.Thread(target=tail_log_file, args=(log_file, stop_event))
     log_thread.start()
 
     try:
