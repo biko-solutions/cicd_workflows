@@ -66,7 +66,7 @@ runs:
         update_status=$?
 
         echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT
-        echo -e '\033[32mUpdate status ===>' $UPDATE_RESULT '\033[0m'
+        echo -e '\033[32mUpdate status ===>' $update_status '\033[0m'
 
         sudo systemctl restart $ODOO_SERVICE
         echo "::endgroup::"
