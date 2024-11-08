@@ -44,16 +44,12 @@ runs:
       shell: bash
 
     - name: Hard update (base module)
-      id: update-database
       run: |
         echo -e "::group::\033[34m=== Starting database update ===\033[0m"
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         showlog_flag=$([ "$SHOW_LOG" == "true" ] && echo "--show-log" || echo "")
 
         trap ' \
-          update_status=$?; \
-          echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT; \
-          echo -e '\033[32mUpdate status ===>' $update_status '\033[0m'; \
           echo "::endgroup::"; \
         ' EXIT
 
@@ -76,17 +72,14 @@ runs:
       shell: bash
 
     - name: Start Odoo
+      if: ${{ always() }}
       run: |
+        echo -e "::group::\033[34m=== Starting Odoo Service ===\033[0m"
         sudo systemctl start $ODOO_SERVICE
         sleep 10
         echo -e "\033[34m=== SHOW ODOO STATUS ===\033[0m"
         sudo systemctl status $ODOO_SERVICE
-        if [ $UPDATE_RESULT -ne 0 ]; then
-          echo -e "\033[31mError: Database update failed.\033[0m"
-          exit 1
-        fi
+        echo "::endgroup::" \
       env:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
-        UPDATE_RESULT: ${{ steps.update-database.outputs.UPDATE_RESULT }}
       shell: bash
-      if: ${{ always() }}
