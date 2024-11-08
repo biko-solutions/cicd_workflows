@@ -3,6 +3,7 @@ import logging
 import re
 import subprocess
 import sys
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -15,6 +16,23 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+
+def tail_log_file(log_file, stop_event):
+    """Функция для параллельного чтения и вывода содержимого лог-файла с возможностью остановки."""
+    with subprocess.Popen(
+        ["tail", "-f", log_file],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ) as proc:
+        while not stop_event.is_set():
+            line = proc.stdout.readline()
+            if line:
+                logger.info(f"[LOG OUTPUT] {line.strip()}")
+            else:
+                break
+        proc.terminate()
 
 
 def update_database(
@@ -52,6 +70,14 @@ def update_database(
 
     logger.info(f"Starting database update for {db_name}")
     logger.info(f"Logfile {log_file}")
+
+    # Флаг для остановки потока
+    stop_event = threading.Event()
+
+    # Запуск потока для параллельного чтения логов
+    log_thread = threading.Thread(target=tail_log_file, args=(log_file, stop_event))
+    log_thread.start()
+
     try:
         result = subprocess.run(command, check=True)
         logger.info(
@@ -60,6 +86,10 @@ def update_database(
     except subprocess.CalledProcessError as e:
         logger.error(f"Failed to update database {db_name}. Error: {e}")
         error_found = True
+    finally:
+        # Установка флага для остановки потока и ожидание его завершения
+        stop_event.set()
+        log_thread.join()
 
     # Always check logs for errors, regardless of the process exit code
     with open(log_file, "r") as file:
