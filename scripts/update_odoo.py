@@ -30,6 +30,39 @@ def tail_log_file_direct(log_file, stop_event):
                 time.sleep(1)  # Ждать перед повторной проверкой
 
 
+def tail_log_file(log_file, stop_event):
+    """Функция для параллельного чтения и вывода содержимого лог-файла с возможностью остановки."""
+    with subprocess.Popen(
+        ["tail", "-f", log_file],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+    ) as proc:
+        index = 0
+        logger.debug("[DEBUG] Запущен процесс tail -f")
+
+        while not stop_event.is_set():
+            logger.debug(f"[DEBUG] Проверка перед чтением строки, итерация {index}")
+            index += 1
+
+            # Проверка состояния процесса
+            if proc.poll() is not None:
+                logger.debug("[DEBUG] Процесс tail завершился")
+                break
+
+            line = proc.stdout.readline()
+            if line:
+                logger.debug("[DEBUG] Получена строка из потока stdout")
+                logger.info(f"[LOG OUTPUT] {line.strip()}")
+            else:
+                logger.debug("[DEBUG] Строка пустая, возможно конец потока")
+                break
+
+        # Завершаем процесс и выводим сообщение
+        proc.terminate()
+        logger.debug("[DEBUG] Процесс tail завершен вручную")
+
+
 def update_database(
     db_name,
     main_path,
@@ -70,7 +103,9 @@ def update_database(
     stop_event = threading.Event()
 
     # Запуск потока для параллельного чтения логов
-    log_thread = threading.Thread(target=tail_log_file, args=(log_file, stop_event))
+    log_thread = threading.Thread(
+        target=tail_log_file_direct, args=(log_file, stop_event)
+    )
     log_thread.start()
 
     try:
