@@ -48,7 +48,8 @@ runs:
       run: |
         echo -e "\033[34m=== Starting database update ===\033[0m"
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
-        echo "sudo -u $SERVER_USER $PYTHON_SCRIPT --databases \"$DB_LIST\" --main_path \"$MAIN_PATH\" --config \"$ODOO_CONFIG\" --user \"$SERVER_USER\" --hard $venv_flag --show_log $show_log"
+        showlog_flag=$([ "$SHOW_LOG" == "true" ] && echo "--show-log" || echo "")
+        sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" --hard $venv_flag $showlog_flag
         update_status=$?
         echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT
       env:
@@ -58,7 +59,7 @@ runs:
         DB_LIST: ${{ inputs.DB_LIST }}
         ODOO_CONFIG: ${{ inputs.ODOO_CONFIG }}
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
-        show_log: ${{ inputs.show_log }}
+        SHOW_LOG: ${{ inputs.show_log }}
       shell: bash
 
     - name: Start Odoo
