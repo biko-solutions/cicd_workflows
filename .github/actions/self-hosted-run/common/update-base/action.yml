@@ -45,7 +45,7 @@ runs:
       run: |
         echo -e "\033[34m=== Starting database update ===\033[0m"
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
-        sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" --hard $venv_flag --show_log $show_log
+        echo "sudo -u $SERVER_USER $PYTHON_SCRIPT --databases \"$DB_LIST\" --main_path \"$MAIN_PATH\" --config \"$ODOO_CONFIG\" --user \"$SERVER_USER\" --hard $venv_flag --show_log $show_log"
         update_status=$?
         echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT
       env:
