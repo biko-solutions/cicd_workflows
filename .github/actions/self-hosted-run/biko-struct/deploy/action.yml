@@ -48,7 +48,7 @@ runs:
           echo "ODOO_SERVICE variable is not set."
           exit 100
         fi
-        echo "Current branch: ${{GITHUB_REF_NAME"}}
+        echo "Current branch: $GITHUB_REF_NAME"
       shell: bash
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
