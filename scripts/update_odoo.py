@@ -132,19 +132,13 @@ def update_database(
 
     # Always check logs for errors, regardless of the process exit code
     with open(log_file, "r") as file:
-        log_content = file.readlines()
+        log_content = file.read()
 
-        error_lines = [
-            line for line in log_content if re.search(r" ERROR |Traceback", line)
-        ]
-
-        if error_lines:
+        if re.search(r" ERROR |Traceback", log_content):
             logger.error(
                 f"Errors found during the update of database {db_name}. Check the logs for more information."
             )
-            logger.error(
-                f"Logs for {db_name}:\n{''.join(error_lines)}"
-            )  # выводим только строки с ошибками
+            logger.error(f"Logs for {db_name}:\n{log_content}")
             error_found = True
 
     return 1 if error_found else 0
