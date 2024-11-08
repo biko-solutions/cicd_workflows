@@ -12,7 +12,7 @@ import psutil
 # Configure the logger
 logging.basicConfig(
     stream=sys.stdout,
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 logger = logging.getLogger(__name__)
@@ -27,15 +27,28 @@ def tail_log_file(log_file, stop_event):
         text=True,
     ) as proc:
         index = 0
+        logger.debug("[DEBUG] Запущен процесс tail -f")
+
         while not stop_event.is_set():
-            logger.info(f"[LOG OUTPUT]===> {index}")
+            logger.debug(f"[DEBUG] Проверка перед чтением строки, итерация {index}")
             index += 1
+
+            # Проверка состояния процесса
+            if proc.poll() is not None:
+                logger.debug("[DEBUG] Процесс tail завершился")
+                break
+
             line = proc.stdout.readline()
             if line:
+                logger.debug("[DEBUG] Получена строка из потока stdout")
                 logger.info(f"[LOG OUTPUT] {line.strip()}")
             else:
+                logger.debug("[DEBUG] Строка пустая, возможно конец потока")
                 break
+
+        # Завершаем процесс и выводим сообщение
         proc.terminate()
+        logger.debug("[DEBUG] Процесс tail завершен вручную")
 
 
 def update_database(
