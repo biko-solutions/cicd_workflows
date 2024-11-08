@@ -138,7 +138,8 @@ def update_database(
             logger.error(
                 f"Errors found during the update of database {db_name}. Check the logs for more information."
             )
-            logger.error(f"Logs for {db_name}:\n{log_content}")
+            if not show_log:
+                logger.error(f"Logs for {db_name}:\n{log_content}")
             error_found = True
 
     return 1 if error_found else 0
