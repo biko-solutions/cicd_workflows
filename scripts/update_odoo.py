@@ -133,7 +133,7 @@ def update_database(
     with open(log_file, "r") as file:
         log_content = file.read()
 
-        if re.search(r"ERROR|Traceback", log_content, re.IGNORECASE):
+        if re.search(r" ERROR |Traceback", log_content, re.IGNORECASE):
             logger.error(
                 f"Errors found during the update of database {db_name}. Check the logs for more information."
             )
