@@ -58,8 +58,8 @@ runs:
     - name: Soft update (only changes)
       id: update-database
       run: |
+        echo -e "::group::\033[34m=== Starting database update ===\033[0m"
         sleep 10
-
         venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
         showlog_flag=$([ "$SHOW_LOG" == "true" ] && echo "--show-log" || echo "")
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag $showlog_flag
@@ -67,10 +67,7 @@ runs:
 
         echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT
         echo -e '\033[32mUpdate status ===>' $update_status '\033[0m'
-
-        sudo systemctl restart $ODOO_SERVICE
         echo "::endgroup::"
-
 
         if [ $update_status -ne 0 ]; then
           echo -e "\033[31mError: Database update failed.\033[0m"
@@ -86,4 +83,13 @@ runs:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         exclusive_update: ${{ inputs.exclusive_update }}
         SHOW_LOG: ${{ inputs.show_log }}
+      shell: bash
+
+    - name: Start Odoo
+      if: ${{ inputs.exclusive_update == 'true' || failed()}}
+      run: |
+        echo "DEBUG ====> Restarting Odoo Service"
+        sudo systemctl restart $ODOO_SERVICE
+      env:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
       shell: bash
