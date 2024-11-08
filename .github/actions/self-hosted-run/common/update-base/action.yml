@@ -52,6 +52,7 @@ runs:
         sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" --hard $venv_flag $showlog_flag
         update_status=$?
         echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT
+        echo -e '\033[32mUpdate status ===>' $UPDATE_RESULT '\033[0m'
         echo "::endgroup::"
       env:
         USE_VENV: ${{ inputs.USE_VENV }}
