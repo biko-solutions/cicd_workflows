@@ -59,15 +59,14 @@ runs:
       id: update-database
       run: |
         echo -e "::group::\033[34m=== Starting database update ===\033[0m"
-        sleep 10
-        venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
-        showlog_flag=$([ "$SHOW_LOG" == "true" ] && echo "--show-log" || echo "")
-        sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag $showlog_flag
-        update_status=$?
+      sleep 10
+      venv_flag=$([ "$USE_VENV" == "true" ] && echo "--use-venv" || echo "")
+      showlog_flag=$([ "$SHOW_LOG" == "true" ] && echo "--show-log" || echo "")
 
-        echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT
-        echo -e '\033[32mUpdate status ===>' $update_status '\033[0m'
-        echo "::endgroup::"
+      trap 'echo "UPDATE_RESULT=$update_status" >> $GITHUB_OUTPUT; echo -e "\033[32mUpdate status ===>" $update_status "\033[0m"; echo "::endgroup::"' EXIT
+
+      sudo -u $SERVER_USER $PYTHON_SCRIPT --databases "$DB_LIST" --main_path "$MAIN_PATH" --config "$ODOO_CONFIG" --user "$SERVER_USER" $venv_flag $showlog_flag || true
+      update_status=$?
       env:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
