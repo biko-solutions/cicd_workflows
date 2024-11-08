@@ -227,7 +227,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--use-venv", action="store_true", help="Use virtual environment during update"
     )
-    parser.add_argument("--show_log", action="store_true", help="Show update log")
+    parser.add_argument("--show-log", action="store_true", help="Show update log")
 
     args = parser.parse_args()
 
