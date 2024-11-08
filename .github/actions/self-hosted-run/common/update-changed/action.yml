@@ -82,11 +82,10 @@ runs:
 
     - name: Start Odoo
       if: ${{ always() }}
-      if: ${{ inputs.exclusive_update == 'true' }}
       run: |
         echo "DEBUG ====> Restarting Odoo Service"
         sudo systemctl restart $ODOO_SERVICE
-        
+
         if [ $UPDATE_RESULT -ne 0 ]; then
           echo -e "\033[31mError: Database update failed.\033[0m"
           exit 1
