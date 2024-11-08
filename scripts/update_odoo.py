@@ -18,37 +18,16 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def tail_log_file(log_file, stop_event):
-    """Функция для параллельного чтения и вывода содержимого лог-файла с возможностью остановки."""
-    with subprocess.Popen(
-        ["tail", "-f", log_file],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    ) as proc:
-        index = 0
-        logger.debug("[DEBUG] Запущен процесс tail -f")
-
+def tail_log_file_direct(log_file, stop_event):
+    """Чтение лог-файла напрямую с паузами."""
+    with open(log_file, "r") as file:
+        file.seek(0, 2)  # Перейти в конец файла
         while not stop_event.is_set():
-            logger.debug(f"[DEBUG] Проверка перед чтением строки, итерация {index}")
-            index += 1
-
-            # Проверка состояния процесса
-            if proc.poll() is not None:
-                logger.debug("[DEBUG] Процесс tail завершился")
-                break
-
-            line = proc.stdout.readline()
+            line = file.readline()
             if line:
-                logger.debug("[DEBUG] Получена строка из потока stdout")
                 logger.info(f"[LOG OUTPUT] {line.strip()}")
             else:
-                logger.debug("[DEBUG] Строка пустая, возможно конец потока")
-                break
-
-        # Завершаем процесс и выводим сообщение
-        proc.terminate()
-        logger.debug("[DEBUG] Процесс tail завершен вручную")
+                time.sleep(1)  # Ждать перед повторной проверкой
 
 
 def update_database(
