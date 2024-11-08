@@ -86,7 +86,7 @@ runs:
       shell: bash
 
     - name: Start Odoo
-      if: ${{ inputs.exclusive_update == 'true' || failed()}}
+      if: ${{ inputs.exclusive_update == 'true' || failure()}}
       run: |
         echo "DEBUG ====> Restarting Odoo Service"
         sudo systemctl restart $ODOO_SERVICE
