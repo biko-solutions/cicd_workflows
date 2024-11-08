@@ -82,7 +82,6 @@ runs:
     - name: Start Odoo
       if: ${{ always() }}
       run: |
-        echo ${{ failure() }}
         echo "DEBUG ====> Restarting Odoo Service"
         sudo systemctl restart $ODOO_SERVICE
 
