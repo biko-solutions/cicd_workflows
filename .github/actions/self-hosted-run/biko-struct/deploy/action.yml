@@ -61,7 +61,7 @@ runs:
         token: ${{ inputs.CICD_TOKEN }}
         fetch-depth: 0
         show-progress: false
-        ref: debug
+        ref: ${{github.ref_name}}
 
     - name: Set venv
       id: create-python-script
