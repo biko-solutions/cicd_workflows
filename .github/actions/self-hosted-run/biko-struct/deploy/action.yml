@@ -48,7 +48,6 @@ runs:
           echo "ODOO_SERVICE variable is not set."
           exit 100
         fi
-        echo "BRANCH_NAME=${{ github.ref_name }}" >> $GITHUB_ENV
       shell: bash
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
@@ -65,7 +64,7 @@ runs:
         token: ${{ inputs.CICD_TOKEN }}
         fetch-depth: 0
         show-progress: false
-        ref: ${{GITHUB_REF_NAME}}
+        ref: ${{github.ref_name}}
 
     - name: Set venv
       id: create-python-script
