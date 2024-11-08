@@ -45,11 +45,13 @@ runs:
           echo "ODOO_SERVICE variable is not set."
           exit 100
         fi
+        echo "Current branch: $REFNAME"
       shell: bash
       env:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         ODOO_SERVICE: ${{inputs.ODOO_SERVICE}}
         SERVER_USER: ${{inputs.SERVER_USER}}
+        REFNAME: ${{github.ref_name}}
 
     - name: Log checkout
       run: echo -e "\033[32m============= PULLING THE CICD REPO =============\033[0m"
