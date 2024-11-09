@@ -89,7 +89,7 @@ def update_database(
             server_user,
             "bash",
             "-c",
-            f"source '{main_path}/venv/bin/activate' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level info",
+            f"source '{main_path}/venv/bin/activate' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level {'info' if show_log else 'warn'}",
         ]
     else:
         command = [
@@ -98,7 +98,7 @@ def update_database(
             server_user,
             "bash",
             "-c",
-            f"source '/home/{server_user}/.bashrc' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level info",
+            f"source '/home/{server_user}/.bashrc' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level {'info' if show_log else 'warn'}",
         ]
 
     if hard_update:
@@ -113,9 +113,8 @@ def update_database(
     stop_event = threading.Event()
 
     # Start a thread to read logs in parallel if show_log == True
-    if show_log:
-        log_thread = threading.Thread(target=tail_log_file, args=(log_file, stop_event))
-        log_thread.start()
+    log_thread = threading.Thread(target=tail_log_file, args=(log_file, stop_event))
+    log_thread.start()
 
     try:
         result = subprocess.run(command, check=True)
@@ -126,9 +125,8 @@ def update_database(
         logger.error(f"Failed to update database {db_name}. Error: {e}")
         error_found = True
     finally:
-        if show_log:
-            stop_event.set()
-            log_thread.join()
+        stop_event.set()
+        log_thread.join()
 
     # Always check logs for errors, regardless of the process exit code
     with open(log_file, "r") as file:
