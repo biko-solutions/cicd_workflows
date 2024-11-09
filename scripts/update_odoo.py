@@ -89,7 +89,7 @@ def update_database(
             server_user,
             "bash",
             "-c",
-            f"source '{main_path}/venv/bin/activate' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level {'info' if show_log else 'warning'}",
+            f"source '{main_path}/venv/bin/activate' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level {'info' if show_log else 'warn'}",
         ]
     else:
         command = [
@@ -98,7 +98,7 @@ def update_database(
             server_user,
             "bash",
             "-c",
-            f"source '/home/{server_user}/.bashrc' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level {'info' if show_log else 'warning'}",
+            f"source '/home/{server_user}/.bashrc' && click-odoo-update -c '{config_path}' -d '{db_name}' --logfile '{log_file}' --watcher-max-seconds 0 --log-level {'info' if show_log else 'warn'}",
         ]
 
     if hard_update:
