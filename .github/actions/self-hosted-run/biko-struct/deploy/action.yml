@@ -121,6 +121,7 @@ runs:
         show_log: ${{ inputs.show_log }}
 
     - name: Update submodules HASH
+      continue-on-error: true
       run: |
         echo -e "::group::\033[32m ============= UPDATING SUBMODULES HASH =============\033[0m"
         cd $MAIN_PATH

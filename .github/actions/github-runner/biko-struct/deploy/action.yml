@@ -115,6 +115,7 @@ runs:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     - name: Update submodules HASH
+      continue-on-error: true
       run: |
         echo -e "::group::\033[32m ============= UPDATING SUBMODULES HASH =============\033[0m"
         cat >~/update_script.sh <<EOF
@@ -141,6 +142,7 @@ runs:
       shell: bash
 
     - name: Clear scripts and data
+      if: ${{ always() }}
       run: |
         echo -e "::group::\033[32m ============= GARBAGE COLLECTING =============\033[0m"
         ssh deploy "rm -rf $SCRIPTDIR"
