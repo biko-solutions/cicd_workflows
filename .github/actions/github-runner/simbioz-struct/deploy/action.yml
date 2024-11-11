@@ -140,6 +140,3 @@ runs:
       shell: bash
       env:
         SCRIPTDIR: ${{env.SCRIPTDIR}}
-
-    - uses: colpal/actions-clean@v1
-      if: ${{ always() }}
