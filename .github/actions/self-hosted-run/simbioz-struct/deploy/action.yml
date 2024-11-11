@@ -100,29 +100,43 @@ runs:
         ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
         ODOO_DB: ${{inputs.ODOO_DB}}
 
-    - name: Soft update (only changes)
-      if: ${{ inputs.base_update == 'false' }}
-      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-changed@main
-      with:
+    - name: Stop Odoo
+      run: |
+        echo -e "\033[34m=== STOPPING ODOO ===\033[0m"
+        sudo systemctl stop $ODOO_SERVICE
+      env:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
-        USE_VENV: ${{ inputs.USE_VENV }}
-        SERVER_USER: ${{ inputs.SERVER_USER }}
-        PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
-        DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
-        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
-        MAIN_PATH: ${{ inputs.MAIN_PATH }}
-        exclusive_update: ${{ inputs.exclusive_update }}
-        show_log: ${{ inputs.show_log }}
+      shell: bash
 
-    - name: Hard update (base module)
-      if: ${{ inputs.base_update == 'true' }}
-      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-base@main
+    - name: Start Odoo
+      if: ${{ inputs.exclusive_update == 'false' && inputs.base_update == 'false' }}
+      run: sudo systemctl start $ODOO_SERVICE
+      env:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+      shell: bash
+
+    - name: Update Databases
+      uses: biko-solutions/cicd_workflows/.github/actions/self-hosted-run/common/update-db@main
       with:
         ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
         USE_VENV: ${{ inputs.USE_VENV }}
         SERVER_USER: ${{ inputs.SERVER_USER }}
         PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
         DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
-        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         show_log: ${{ inputs.show_log }}
+        base_update: ${{ inputs.base_update }}
+
+    - name: Start Odoo
+      if: ${{ always() }}
+      run: |
+        echo -e "::group::\033[34m=== Starting Odoo Service ===\033[0m"
+        sudo systemctl restart $ODOO_SERVICE
+        sleep 10
+        echo -e "\033[34m=== SHOW ODOO STATUS ===\033[0m"
+        sudo systemctl status $ODOO_SERVICE
+        echo "::endgroup::" \
+      env:
+        ODOO_SERVICE: ${{ inputs.ODOO_SERVICE }}
+      shell: bash
