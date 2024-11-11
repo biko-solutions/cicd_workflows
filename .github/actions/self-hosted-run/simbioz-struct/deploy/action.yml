@@ -123,7 +123,7 @@ runs:
         SERVER_USER: ${{ inputs.SERVER_USER }}
         PYTHON_SCRIPT: ${{ steps.create-python-script.outputs.PYTHON_SCRIPT }}
         DB_LIST: ${{ steps.get-db-list.outputs.DB_RESULT }}
-        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config_local/odoo-server.conf
+        ODOO_CONFIG: ${{inputs.MAIN_PATH}}/config/odoo-server.conf
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
         show_log: ${{ inputs.show_log }}
         base_update: ${{ inputs.base_update }}
