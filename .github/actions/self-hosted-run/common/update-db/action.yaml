@@ -28,8 +28,8 @@ inputs:
     default: false
   base_update:
     type: boolean
-      required: false
-      default: false
+    required: false
+    default: false
 
 runs:
   using: 'composite'
@@ -65,4 +65,3 @@ runs:
         SHOW_LOG: ${{ inputs.show_log }}
         HARD_UPD: ${{ inputs.base_update }}
       shell: bash
-
