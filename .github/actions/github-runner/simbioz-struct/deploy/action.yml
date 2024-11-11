@@ -134,12 +134,10 @@ runs:
         MAIN_PATH: ${{ inputs.MAIN_PATH }}
 
     - name: Clear scripts and data
+      if: ${{ always() }}
       run: |
         echo -e "::group::\033[32m ============= GARBAGE COLLECTING =============\033[0m"
         ssh deploy "rm -rf $SCRIPTDIR"
       shell: bash
       env:
         SCRIPTDIR: ${{env.SCRIPTDIR}}
-
-    - uses: colpal/actions-clean@v1
-      if: ${{ always() }}
