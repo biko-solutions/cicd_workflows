@@ -126,7 +126,7 @@ runs:
       run: |
         echo -e "::group::\033[32m ============= UPDATING SUBMODULES HASH =============\033[0m"
         cd $MAIN_PATH
-        echo "Test Rules" > rules.txt
+        echo "Test Rules" >> rules.txt
         sudo -u $SERVER_USER git submodule foreach --recursive git reset --hard > /dev/null 2>&1
         if [[ -n $(sudo -u $SERVER_USER git status -s) ]]; then
           sudo -u $SERVER_USER git config --global user.name github-actions[bot]
