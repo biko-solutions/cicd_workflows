@@ -26,7 +26,7 @@ jobs:
               echo "$file"
           done
       - name: Install Python
-        uses: actions/setup-python@v7.0.0
+        uses: actions/setup-python@v7.1.0
         with:
           python-version: ${{ inputs.python-version }}
       - name: Pre-commit
